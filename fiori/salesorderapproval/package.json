@@ -11,7 +11,8 @@
   "main": "n/a",
   "license": "UNLICENSED",
   "scripts": {
-    "start":  "fiori run --open 'test/flpSandbox.html'",
+    "preview": "node preview-server.js",
+    "start":  "fiori run --open 'index.html'",
     "build":  "ui5 build --config ui5.yaml --clean-dest",
     "deploy": "fiori add deploy-config && npm run build && fiori deploy",
     "lint":   "eslint webapp"

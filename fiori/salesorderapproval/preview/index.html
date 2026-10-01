@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Order Approval - SAP Fiori Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sap-shell-bg: #1d2d3e;
+            --sap-shell-hover: #2b3d52;
+            --sap-page-bg: #f5f6f7;
+            --sap-card-bg: #ffffff;
+            --sap-text-primary: #1d2d3e;
+            --sap-text-secondary: #556b82;
+            --sap-text-muted: #8292a1;
+            --sap-border: #d5dadd;
+            --sap-border-subtle: #eaeef1;
+            --sap-primary: #0070f2;
+            --sap-primary-hover: #0056b3;
+            --sap-primary-active: #00448a;
+            --sap-positive: #107e3e;
+            --sap-positive-bg: #e7f7ed;
+            --sap-critical: #c85300;
+            --sap-critical-bg: #fef1e6;
+            --sap-negative: #bb0000;
+            --sap-negative-bg: #fde8e8;
+            --sap-neutral: #5b738b;
+            --sap-neutral-bg: #eef2f5;
+            --sap-table-hover: #f0f4f8;
+            --sap-table-selected: #e5f0fc;
+            --font-main: "72", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-dialog: 0 12px 32px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--sap-page-bg);
+            color: var(--sap-text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Shell Header */
+        .sap-shell {
+            height: 48px;
+            background: var(--sap-shell-bg);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            z-index: 100;
+            position: sticky;
+            top: 0;
+        }
+
+        .sap-shell-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sap-logo-badge {
+            background: linear-gradient(135deg, #0070f2 0%, #00448a 100%);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.5px;
+        }
+
+        .sap-shell-title {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .sap-shell-divider {
+            color: #486581;
+            font-size: 14px;
+        }
+
+        .sap-shell-sub {
+            font-size: 13px;
+            color: #9fb3c8;
+        }
+
+        .sap-shell-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .sap-avatar {
+            width: 30px;
+            height: 30px;
+            background: #0070f2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Subheader Bar */
+        .sap-subheader {
+            background: #ffffff;
+            border-bottom: 1px solid var(--sap-border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sap-page-heading h1 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--sap-text-primary);
+        }
+
+        .sap-page-heading p {
+            font-size: 0.85rem;
+            color: var(--sap-text-secondary);
+            margin-top: 2px;
+        }
+
+        .rap-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eef5fc;
+            color: #0056b3;
+            border: 1px solid #c2defc;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Filter Bar Card */
+        .content-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            flex: 1;
+        }
+
+        .sap-filter-card {
+            background: #ffffff;
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--sap-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sap-input, .sap-select {
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--sap-text-primary);
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .sap-input:focus, .sap-select:focus {
+            outline: none;
+            border-color: var(--sap-primary);
+            box-shadow: 0 0 0 2px rgba(0,112,242,0.15);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 1px;
+        }
+
+        /* Buttons */
+        .sap-btn {
+            height: 36px;
+            padding: 0 16px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .sap-btn-primary {
+            background: var(--sap-primary);
+            color: #ffffff;
+        }
+
+        .sap-btn-primary:hover:not(:disabled) {
+            background: var(--sap-primary-hover);
+        }
+
+        .sap-btn-secondary {
+            background: #ffffff;
+            color: var(--sap-primary);
+            border-color: var(--sap-primary);
+        }
+
+        .sap-btn-secondary:hover:not(:disabled) {
+            background: #f0f6fc;
+        }
+
+        .sap-btn-positive {
+            background: var(--sap-positive);
+            color: #ffffff;
+        }
+
+        .sap-btn-positive:hover:not(:disabled) {
+            background: #0d6934;
+        }
+
+        .sap-btn-negative {
+            background: var(--sap-negative);
+            color: #ffffff;
+        }
+
+        .sap-btn-negative:hover:not(:disabled) {
+            background: #9d0000;
+        }
+
+        .sap-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Table Card */
+        .sap-table-card {
+            background: #ffffff;
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-toolbar {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--sap-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: #fafbfc;
+        }
+
+        .table-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-count-badge {
+            background: var(--sap-neutral-bg);
+            color: var(--sap-neutral);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Data Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table.sap-grid {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        table.sap-grid th {
+            background: #f5f7f9;
+            color: var(--sap-text-secondary);
+            font-weight: 600;
+            font-size: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--sap-border);
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        table.sap-grid td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--sap-border-subtle);
+            color: var(--sap-text-primary);
+            vertical-align: middle;
+        }
+
+        table.sap-grid tbody tr {
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        table.sap-grid tbody tr:hover {
+            background-color: var(--sap-table-hover);
+        }
+
+        table.sap-grid tbody tr.selected {
+            background-color: var(--sap-table-selected);
+        }
+
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--sap-primary);
+            cursor: pointer;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .status-badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-draft {
+            background: var(--sap-neutral-bg);
+            color: var(--sap-neutral);
+        }
+        .status-draft::before { background: var(--sap-neutral); }
+
+        .status-pending {
+            background: var(--sap-critical-bg);
+            color: var(--sap-critical);
+        }
+        .status-pending::before { background: var(--sap-critical); }
+
+        .status-approved {
+            background: var(--sap-positive-bg);
+            color: var(--sap-positive);
+        }
+        .status-approved::before { background: var(--sap-positive); }
+
+        .status-rejected {
+            background: var(--sap-negative-bg);
+            color: var(--sap-negative);
+        }
+        .status-rejected::before { background: var(--sap-negative); }
+
+        .amount-col {
+            font-family: "Inter", var(--font-main);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Details Object Page Modal / Slide-over */
+        .op-drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            z-index: 200;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .op-drawer-backdrop.active {
+            display: flex;
+        }
+
+        .op-drawer {
+            background: #ffffff;
+            width: 650px;
+            max-width: 95vw;
+            height: 100vh;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .op-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--sap-border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            background: #fafbfc;
+        }
+
+        .op-title-area h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+
+        .op-title-area .op-sub {
+            font-size: 12px;
+            color: var(--sap-text-secondary);
+            margin-top: 3px;
+        }
+
+        .op-close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--sap-text-muted);
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .op-close-btn:hover {
+            color: var(--sap-text-primary);
+        }
+
+        .op-actions-bar {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--sap-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+        }
+
+        .op-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .section-block {
+            background: #ffffff;
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--sap-border-subtle);
+            padding-bottom: 0.5rem;
+        }
+
+        .key-value-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px 20px;
+            font-size: 13px;
+        }
+
+        .kv-label {
+            color: var(--sap-text-secondary);
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .kv-val {
+            font-weight: 600;
+            color: var(--sap-text-primary);
+        }
+
+        /* Generic Modal Dialog */
+        .sap-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sap-modal-backdrop.active {
+            display: flex;
+        }
+
+        .sap-modal {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            width: 480px;
+            max-width: 90vw;
+            box-shadow: var(--shadow-dialog);
+            overflow: hidden;
+            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1rem 1.25rem;
+            background: #fafbfc;
+            border-bottom: 1px solid var(--sap-border);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-footer {
+            padding: 0.85rem 1.25rem;
+            border-top: 1px solid var(--sap-border);
+            background: #fafbfc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Toast notification */
+        .sap-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1d2d3e;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 999;
+            max-width: 480px;
+        }
+
+        .sap-toast.active {
+            display: flex;
+            animation: toastUp 0.3s ease;
+        }
+
+        @keyframes toastUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SAP Fiori Shell Header -->
+    <header class="sap-shell">
+        <div class="sap-shell-brand">
+            <span class="sap-logo-badge">SAP</span>
+            <span class="sap-shell-title">Sales Order Approval</span>
+            <span class="sap-shell-divider">|</span>
+            <span class="sap-shell-sub">Clean Core RAP (OData V4)</span>
+        </div>
+        <div class="sap-shell-user">
+            <span id="currentUserRole" style="font-weight: 500; color: #cbd5e1;">User: JSMITH (Sales Mgr)</span>
+            <div class="sap-avatar" title="Switch User / Role" onclick="toggleUserRole()">JS</div>
+        </div>
+    </header>
+
+    <!-- Subheader with title -->
+    <div class="sap-subheader">
+        <div class="sap-page-heading">
+            <h1>Sales Order Requests</h1>
+            <p>Manage, review, and approve incoming sales order draft requests</p>
+        </div>
+        <div class="rap-badge-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            ABAP RAP Managed with Draft & Strict(2)
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="content-container">
+
+        <!-- Filter Bar -->
+        <section class="sap-filter-card">
+            <div class="filter-group">
+                <label for="filterStatus">Status</label>
+                <select id="filterStatus" class="sap-select" onchange="applyFilters()">
+                    <option value="">All Statuses</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="PENDING">Pending Approval</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="REJECTED">Rejected</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterCustomer">Customer</label>
+                <input id="filterCustomer" class="sap-input" placeholder="Search Customer..." oninput="applyFilters()" />
+            </div>
+            <div class="filter-group">
+                <label for="filterSearch">Search Request ID</label>
+                <input id="filterSearch" class="sap-input" placeholder="e.g. SO-2026-0001" oninput="applyFilters()" />
+            </div>
+            <div class="filter-actions">
+                <button class="sap-btn sap-btn-primary" onclick="applyFilters()">Go</button>
+                <button class="sap-btn sap-btn-secondary" onclick="resetFilters()">Reset</button>
+            </div>
+        </section>
+
+        <!-- Table Card with Toolbar -->
+        <section class="sap-table-card">
+            <div class="table-toolbar">
+                <div class="table-title">
+                    <span>Requests</span>
+                    <span id="recordCount" class="item-count-badge">4</span>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="sap-btn sap-btn-primary" onclick="openCreateModal()">+ Create</button>
+                    <button id="btnSubmit" class="sap-btn sap-btn-secondary" disabled onclick="executeAction('submit')">Submit</button>
+                    <button id="btnApprove" class="sap-btn sap-btn-positive" disabled onclick="executeAction('approve')">Approve</button>
+                    <button id="btnReject" class="sap-btn sap-btn-negative" disabled onclick="promptRejectModal()">Reject</button>
+                    <button id="btnResubmit" class="sap-btn sap-btn-secondary" disabled onclick="executeAction('resubmit')">Resubmit</button>
+                </div>
+            </div>
+
+            <!-- List Report Grid Table -->
+            <div class="table-responsive">
+                <table class="sap-grid">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-cell">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" />
+                            </th>
+                            <th>Request ID</th>
+                            <th>Customer</th>
+                            <th>Request Date</th>
+                            <th style="text-align: right;">Total Amount</th>
+                            <th>Currency</th>
+                            <th>Status</th>
+                            <th>Approver</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Details Object Page Drawer -->
+    <div id="opDrawerBackdrop" class="op-drawer-backdrop" onclick="closeDrawer(event)">
+        <div class="op-drawer" onclick="event.stopPropagation()">
+            <div class="op-header">
+                <div class="op-title-area">
+                    <h2 id="opRequestId">SO-2026-0001</h2>
+                    <div id="opCustomerSub" class="op-sub">Customer: Acme Industrial Corp</div>
+                </div>
+                <button class="op-close-btn" onclick="closeDrawer()">&times;</button>
+            </div>
+
+            <div class="op-actions-bar">
+                <button id="opBtnSubmit" class="sap-btn sap-btn-secondary" onclick="executeAction('submit', currentDetailItem.RequestId)">Submit</button>
+                <button id="opBtnApprove" class="sap-btn sap-btn-positive" onclick="executeAction('approve', currentDetailItem.RequestId)">Approve</button>
+                <button id="opBtnReject" class="sap-btn sap-btn-negative" onclick="promptRejectModal(currentDetailItem.RequestId)">Reject</button>
+                <button id="opBtnResubmit" class="sap-btn sap-btn-secondary" onclick="executeAction('resubmit', currentDetailItem.RequestId)">Resubmit</button>
+            </div>
+
+            <div class="op-content">
+                <!-- General Info Section -->
+                <div class="section-block">
+                    <div class="section-title">General Information</div>
+                    <div class="key-value-grid">
+                        <div>
+                            <div class="kv-label">Customer ID</div>
+                            <div id="opCustomerId" class="kv-val">-</div>
+                        </div>
+                        <div>
+                            <div class="kv-label">Request Date</div>
+                            <div id="opRequestDate" class="kv-val">-</div>
+                        </div>
+                        <div>
+                            <div class="kv-label">Total Amount</div>
+                            <div id="opTotalAmount" class="kv-val" style="color: #0070f2; font-size: 15px;">-</div>
+                        </div>
+                        <div>
+                            <div class="kv-label">Status</div>
+                            <div id="opStatusBadge">-</div>
+                        </div>
+                        <div>
+                            <div class="kv-label">Created By</div>
+                            <div id="opCreatedBy" class="kv-val">-</div>
+                        </div>
+                        <div>
+                            <div class="kv-label">Approver</div>
+                            <div id="opApprover" class="kv-val">-</div>
+                        </div>
+                    </div>
+                    <div id="rejectionReasonBlock" style="margin-top: 14px; display: none;">
+                        <div class="kv-label" style="color: #bb0000; font-weight: 700;">Rejection Reason</div>
+                        <div id="opRejectionReason" style="background: #fde8e8; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #900; margin-top: 4px;">-</div>
+                    </div>
+                </div>
+
+                <!-- Items Section -->
+                <div class="section-block">
+                    <div class="section-title">Items (Lineitem Reference)</div>
+                    <table class="sap-grid" style="font-size: 12px;">
+                        <thead>
+                            <tr>
+                                <th>Item #</th>
+                                <th>Material</th>
+                                <th>Description</th>
+                                <th style="text-align: right;">Qty</th>
+                                <th>Unit</th>
+                                <th style="text-align: right;">Net Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opItemsTableBody">
+                            <!-- Items populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Reason Parameter Dialog (ZSO_P_REJECT) -->
+    <div id="rejectModalBackdrop" class="sap-modal-backdrop">
+        <div class="sap-modal">
+            <div class="modal-header">Enter Rejection Reason</div>
+            <div class="modal-body">
+                <p style="font-size: 13px; color: var(--sap-text-secondary);">
+                    Parameter structure: <code>ZSO_P_REJECT (RejectionReason CHAR 255)</code>
+                </p>
+                <textarea id="rejectionInput" class="sap-input" rows="3" style="height: 80px; width: 100%; padding: 8px;" placeholder="Please specify why this order is rejected..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="sap-btn sap-btn-secondary" onclick="closeRejectModal()">Cancel</button>
+                <button class="sap-btn sap-btn-negative" onclick="confirmReject()">Confirm Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Request Modal -->
+    <div id="createModalBackdrop" class="sap-modal-backdrop">
+        <div class="sap-modal" style="width: 540px;">
+            <div class="modal-header">Create Sales Order Request</div>
+            <div class="modal-body">
+                <div class="filter-group">
+                    <label>Customer</label>
+                    <select id="newCustomerSelect" class="sap-select">
+                        <option value="CUST-1001|Acme Industrial Corp">CUST-1001 - Acme Industrial Corp</option>
+                        <option value="CUST-1002|TechLogix Global BV">CUST-1002 - TechLogix Global BV</option>
+                        <option value="CUST-1003|Nordic Marine Logistics">CUST-1003 - Nordic Marine Logistics</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <div class="filter-group">
+                        <label>Material</label>
+                        <input id="newMaterialInput" class="sap-input" value="MAT-VALVE-HD" />
+                    </div>
+                    <div class="filter-group" style="max-width: 100px;">
+                        <label>Quantity</label>
+                        <input id="newQuantityInput" type="number" class="sap-input" value="10" />
+                    </div>
+                    <div class="filter-group" style="max-width: 120px;">
+                        <label>Unit Price (EUR)</label>
+                        <input id="newPriceInput" type="number" class="sap-input" value="450" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="sap-btn sap-btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                <button class="sap-btn sap-btn-primary" onclick="confirmCreate()">Save as Draft</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="sapToast" class="sap-toast">
+        <span id="toastMessage">Action completed</span>
+    </div>
+
+    <script>
+        let salesOrders = [];
+        let selectedRowId = null;
+        let currentDetailItem = null;
+        let rejectTargetId = null;
+
+        // Fetch initial data from server
+        async function loadData() {
+            try {
+                const res = await fetch('/api/orders');
+                salesOrders = await res.json();
+                renderTable();
+            } catch (err) {
+                console.error("Failed to load orders:", err);
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const statusFilter = document.getElementById('filterStatus').value;
+            const customerFilter = document.getElementById('filterCustomer').value.toLowerCase();
+            const searchFilter = document.getElementById('filterSearch').value.toLowerCase();
+
+            const filtered = salesOrders.filter(so => {
+                if (statusFilter && so.Status !== statusFilter) return false;
+                if (customerFilter && !so.CustomerName.toLowerCase().includes(customerFilter)) return false;
+                if (searchFilter && !so.RequestId.toLowerCase().includes(searchFilter)) return false;
+                return true;
+            });
+
+            document.getElementById('recordCount').innerText = filtered.length;
+
+            filtered.forEach(so => {
+                const tr = document.createElement('tr');
+                if (selectedRowId === so.RequestId) tr.classList.add('selected');
+
+                tr.onclick = (e) => {
+                    // If clicked outside checkbox, open details
+                    if (e.target.type !== 'checkbox') {
+                        openDetailDrawer(so.RequestId);
+                    }
+                };
+
+                const statusClass = `status-${so.Status.toLowerCase()}`;
+
+                tr.innerHTML = `
+                    <td class="checkbox-cell" onclick="event.stopPropagation()">
+                        <input type="checkbox" ${selectedRowId === so.RequestId ? 'checked' : ''} onchange="selectRow('${so.RequestId}', this.checked)" />
+                    </td>
+                    <td style="font-weight: 600; color: #0070f2;">${so.RequestId}</td>
+                    <td>
+                        <div>${so.CustomerName}</div>
+                        <div style="font-size: 11px; color: #8292a1;">${so.CustomerId}</div>
+                    </td>
+                    <td>${so.RequestDate}</td>
+                    <td class="amount-col">${Number(so.TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td>${so.Currency}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${so.Status}</span>
+                    </td>
+                    <td style="color: #556b82;">${so.Approver || '—'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateToolbarButtons();
+        }
+
+        function selectRow(id, isChecked) {
+            if (isChecked) {
+                selectedRowId = id;
+            } else if (selectedRowId === id) {
+                selectedRowId = null;
+            }
+            renderTable();
+        }
+
+        function toggleSelectAll(masterCb) {
+            if (!masterCb.checked) {
+                selectedRowId = null;
+            } else if (salesOrders.length > 0) {
+                selectedRowId = salesOrders[0].RequestId;
+            }
+            renderTable();
+        }
+
+        function updateToolbarButtons() {
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnApprove = document.getElementById('btnApprove');
+            const btnReject = document.getElementById('btnReject');
+            const btnResubmit = document.getElementById('btnResubmit');
+
+            if (!selectedRowId) {
+                btnSubmit.disabled = true;
+                btnApprove.disabled = true;
+                btnReject.disabled = true;
+                btnResubmit.disabled = true;
+                return;
+            }
+
+            const item = salesOrders.find(o => o.RequestId === selectedRowId);
+            if (!item) return;
+
+            // RAP Instance Feature Control Rules
+            btnSubmit.disabled = (item.Status !== 'DRAFT');
+            btnApprove.disabled = (item.Status !== 'PENDING');
+            btnReject.disabled = (item.Status !== 'PENDING');
+            btnResubmit.disabled = (item.Status !== 'REJECTED');
+        }
+
+        function applyFilters() {
+            renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterCustomer').value = '';
+            document.getElementById('filterSearch').value = '';
+            renderTable();
+        }
+
+        // Details drawer
+        function openDetailDrawer(id) {
+            const item = salesOrders.find(o => o.RequestId === id);
+            if (!item) return;
+            currentDetailItem = item;
+
+            document.getElementById('opRequestId').innerText = item.RequestId;
+            document.getElementById('opCustomerSub').innerText = `${item.CustomerName} (${item.CustomerId})`;
+            document.getElementById('opCustomerId').innerText = item.CustomerId;
+            document.getElementById('opRequestDate').innerText = item.RequestDate;
+            document.getElementById('opTotalAmount').innerText = `${Number(item.TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${item.Currency}`;
+            document.getElementById('opCreatedBy').innerText = item.CreatedBy;
+            document.getElementById('opApprover').innerText = item.Approver || 'Not Assigned';
+
+            const statusBadge = document.getElementById('opStatusBadge');
+            statusBadge.innerHTML = `<span class="status-badge status-${item.Status.toLowerCase()}">${item.Status}</span>`;
+
+            const reasonBlock = document.getElementById('rejectionReasonBlock');
+            if (item.Status === 'REJECTED' && item.RejectionReason) {
+                reasonBlock.style.display = 'block';
+                document.getElementById('opRejectionReason').innerText = item.RejectionReason;
+            } else {
+                reasonBlock.style.display = 'none';
+            }
+
+            // Object page buttons
+            document.getElementById('opBtnSubmit').disabled = (item.Status !== 'DRAFT');
+            document.getElementById('opBtnApprove').disabled = (item.Status !== 'PENDING');
+            document.getElementById('opBtnReject').disabled = (item.Status !== 'PENDING');
+            document.getElementById('opBtnResubmit').disabled = (item.Status !== 'REJECTED');
+
+            // Items table
+            const itemsTbody = document.getElementById('opItemsTableBody');
+            itemsTbody.innerHTML = '';
+            if (item.Items && item.Items.length > 0) {
+                item.Items.forEach(it => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-weight: 600;">${it.ItemNo}</td>
+                        <td><code>${it.Material}</code></td>
+                        <td>${it.Description || ''}</td>
+                        <td style="text-align: right;">${it.Quantity}</td>
+                        <td>${it.Unit}</td>
+                        <td class="amount-col">${Number(it.NetAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${it.Currency}</td>
+                    `;
+                    itemsTbody.appendChild(row);
+                });
+            }
+
+            document.getElementById('opDrawerBackdrop').classList.add('active');
+        }
+
+        function closeDrawer() {
+            document.getElementById('opDrawerBackdrop').classList.remove('active');
+        }
+
+        // Actions
+        async function executeAction(actionName, targetId) {
+            const reqId = targetId || selectedRowId;
+            if (!reqId) return;
+
+            try {
+                const res = await fetch(`/api/orders/${reqId}/${actionName}`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                showToast(`[RAP Action] ${actionName.toUpperCase()} executed on ${reqId}. Status is now ${data.Status}.`);
+                await loadData();
+                if (currentDetailItem && currentDetailItem.RequestId === reqId) {
+                    openDetailDrawer(reqId);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast(`Error executing ${actionName}`);
+            }
+        }
+
+        function promptRejectModal(targetId) {
+            rejectTargetId = targetId || selectedRowId;
+            document.getElementById('rejectionInput').value = '';
+            document.getElementById('rejectModalBackdrop').classList.add('active');
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModalBackdrop').classList.remove('active');
+            rejectTargetId = null;
+        }
+
+        async function confirmReject() {
+            const reason = document.getElementById('rejectionInput').value.trim();
+            if (!reason) {
+                alert('Please enter a rejection reason.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/orders/${rejectTargetId}/reject`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ RejectionReason: reason })
+                });
+                const data = await res.json();
+                closeRejectModal();
+                showToast(`[RAP Action] REJECT executed on ${rejectTargetId}. Reason saved.`);
+                await loadData();
+                if (currentDetailItem && currentDetailItem.RequestId === rejectTargetId) {
+                    openDetailDrawer(rejectTargetId);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Error rejecting request');
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById('createModalBackdrop').classList.add('active');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModalBackdrop').classList.remove('active');
+        }
+
+        async function confirmCreate() {
+            const [custId, custName] = document.getElementById('newCustomerSelect').value.split('|');
+            const material = document.getElementById('newMaterialInput').value;
+            const qty = parseFloat(document.getElementById('newQuantityInput').value) || 1;
+            const price = parseFloat(document.getElementById('newPriceInput').value) || 100;
+            const netAmount = qty * price;
+
+            const newOrder = {
+                CustomerId: custId,
+                CustomerName: custName,
+                RequestDate: new Date().toISOString().split('T')[0],
+                TotalAmount: netAmount,
+                Currency: 'EUR',
+                Status: 'DRAFT',
+                Approver: '',
+                RejectionReason: '',
+                CreatedBy: 'JSMITH',
+                Items: [
+                    {
+                        ItemNo: '000010',
+                        Material: material,
+                        Description: 'Industrial Component Standard Item',
+                        Quantity: qty,
+                        Unit: 'PCE',
+                        UnitPrice: price,
+                        NetAmount: netAmount,
+                        Currency: 'EUR'
+                    }
+                ]
+            };
+
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newOrder)
+            });
+            const created = await res.json();
+            closeCreateModal();
+            showToast(`[RAP Determination] Created draft ${created.RequestId} with initial status DRAFT.`);
+            await loadData();
+            openDetailDrawer(created.RequestId);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('sapToast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3500);
+        }
+
+        function toggleUserRole() {
+            const label = document.getElementById('currentUserRole');
+            if (label.innerText.includes('JSMITH')) {
+                label.innerText = 'User: DIR_SCHMIDT (Approver)';
+                showToast('Switched to Director Role (Approver)');
+            } else {
+                label.innerText = 'User: JSMITH (Sales Mgr)';
+                showToast('Switched to Requester Role (Sales Mgr)');
+            }
+        }
+
+        // Initialize on load
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+[
+  {
+    "RequestId": "SO-2026-0001",
+    "CustomerId": "CUST-1001",
+    "CustomerName": "Acme Industrial Corp",
+    "RequestDate": "2026-09-28",
+    "TotalAmount": 14500,
+    "Currency": "EUR",
+    "Status": "REJECTED",
+    "StatusCriticality": 1,
+    "Approver": "DIR_SCHMIDT",
+    "RejectionReason": "MM",
+    "CreatedBy": "JSMITH",
+    "CreatedAt": "2026-09-28T08:15:00Z",
+    "ChangedBy": "JSMITH",
+    "ChangedAt": "2026-10-01T20:21:05.042Z",
+    "Items": [
+      {
+        "ItemNo": "000010",
+        "Material": "MAT-PUMP-HD",
+        "Description": "Heavy Duty Industrial Pump",
+        "Quantity": 5,
+        "Unit": "PCE",
+        "UnitPrice": 1500,
+        "NetAmount": 7500,
+        "Currency": "EUR"
+      },
+      {
+        "ItemNo": "000020",
+        "Material": "MAT-VALVE-90",
+        "Description": "High Pressure Safety Valve",
+        "Quantity": 10,
+        "Unit": "PCE",
+        "UnitPrice": 700,
+        "NetAmount": 7000,
+        "Currency": "EUR"
+      }
+    ]
+  },
+  {
+    "RequestId": "SO-2026-0002",
+    "CustomerId": "CUST-1002",
+    "CustomerName": "TechLogix Global BV",
+    "RequestDate": "2026-09-29",
+    "TotalAmount": 4200,
+    "Currency": "EUR",
+    "Status": "APPROVED",
+    "StatusCriticality": 3,
+    "Approver": "MGR_BAUER",
+    "RejectionReason": "",
+    "CreatedBy": "ALICE_M",
+    "CreatedAt": "2026-09-29T10:00:00Z",
+    "ChangedBy": "MGR_BAUER",
+    "ChangedAt": "2026-09-29T14:30:00Z",
+    "Items": [
+      {
+        "ItemNo": "000010",
+        "Material": "MAT-SRV-RACK",
+        "Description": "42U Modular Server Rack",
+        "Quantity": 2,
+        "Unit": "PCE",
+        "UnitPrice": 2100,
+        "NetAmount": 4200,
+        "Currency": "EUR"
+      }
+    ]
+  },
+  {
+    "RequestId": "SO-2026-0003",
+    "CustomerId": "CUST-1003",
+    "CustomerName": "Nordic Marine Logistics",
+    "RequestDate": "2026-09-30",
+    "TotalAmount": 26800,
+    "Currency": "EUR",
+    "Status": "REJECTED",
+    "StatusCriticality": 1,
+    "Approver": "DIR_SCHMIDT",
+    "RejectionReason": "Exceeds quarterly discretionary budget for non-contracted client. Reapply under formal vendor contract.",
+    "CreatedBy": "K_LARSEN",
+    "CreatedAt": "2026-09-30T11:20:00Z",
+    "ChangedBy": "DIR_SCHMIDT",
+    "ChangedAt": "2026-09-30T16:45:00Z",
+    "Items": [
+      {
+        "ItemNo": "000010",
+        "Material": "MAT-ENG-MOD",
+        "Description": "Marine Generator Module",
+        "Quantity": 1,
+        "Unit": "PCE",
+        "UnitPrice": 26800,
+        "NetAmount": 26800,
+        "Currency": "EUR"
+      }
+    ]
+  },
+  {
+    "RequestId": "SO-2026-0004",
+    "CustomerId": "CUST-1001",
+    "CustomerName": "Acme Industrial Corp",
+    "RequestDate": "2026-10-01",
+    "TotalAmount": 8900,
+    "Currency": "EUR",
+    "Status": "DRAFT",
+    "StatusCriticality": 0,
+    "Approver": "",
+    "RejectionReason": "",
+    "CreatedBy": "JSMITH",
+    "CreatedAt": "2026-10-01T09:00:00Z",
+    "ChangedBy": "JSMITH",
+    "ChangedAt": "2026-10-01T09:00:00Z",
+    "Items": [
+      {
+        "ItemNo": "000010",
+        "Material": "MAT-TURB-FAN",
+        "Description": "Cooling Turbine Assembly",
+        "Quantity": 4,
+        "Unit": "PCE",
+        "UnitPrice": 2225,
+        "NetAmount": 8900,
+        "Currency": "EUR"
+      }
+    ]
+  },
+  {
+    "RequestId": "SO-2026-0005",
+    "CustomerId": "CUST-1002",
+    "CustomerName": "TechLogix Global BV",
+    "RequestDate": "2026-10-01",
+    "TotalAmount": 4500,
+    "Currency": "EUR",
+    "Status": "APPROVED",
+    "StatusCriticality": 3,
+    "Approver": "MGR_BAUER",
+    "RejectionReason": "",
+    "CreatedBy": "JSMITH",
+    "CreatedAt": "2026-10-01T20:20:40.354Z",
+    "ChangedBy": "JSMITH",
+    "ChangedAt": "2026-10-01T20:20:48.764Z",
+    "Items": [
+      {
+        "ItemNo": "000010",
+        "Material": "MAT-VALVE-HD",
+        "Description": "Industrial Component Standard Item",
+        "Quantity": 10,
+        "Unit": "PCE",
+        "UnitPrice": 450,
+        "NetAmount": 4500,
+        "Currency": "EUR"
+      }
+    ]
+  }
+]
