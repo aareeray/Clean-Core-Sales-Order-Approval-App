@@ -35,6 +35,21 @@ define table ZSO_REQ_H {
   @EndUserText.label: 'Rejection Reason'
   rejection_reason  : abap.char(255);
 
+  @EndUserText.label: 'Approval Due Date'
+  approval_due_date : abap.dats;
+
+  @EndUserText.label: 'SLA Status'
+  sla_status        : abap.char(12);
+
+  @EndUserText.label: 'Escalation Level'
+  escalation_level  : abap.numc(2);
+
+  @EndUserText.label: 'Escalated To'
+  escalated_to      : abap.char(12);
+
+  @EndUserText.label: 'Escalated At'
+  escalated_at      : utclong;
+
   @EndUserText.label: 'Created By'
   @Semantics.user.createdBy: true
   created_by        : syuname;

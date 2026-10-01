@@ -5,7 +5,8 @@
 define view entity ZSO_R_REQ_H
   as select from ZSO_REQ_H as Header
 
-  composition [0..*] of ZSO_R_REQ_I as _Items
+  composition [0..*] of ZSO_R_REQ_I    as _Items
+  composition [0..*] of ZSO_R_REQ_HIST as _History
 
 {
       ///
@@ -30,6 +31,16 @@ define view entity ZSO_R_REQ_H
       Header.rejection_reason   as RejectionReason,
 
       ///
+      /// SLA & Escalation Fields
+      ///
+      Header.approval_due_date  as ApprovalDueDate,
+      Header.sla_status         as SlaStatus,
+      Header.escalation_level   as EscalationLevel,
+      Header.escalated_to       as EscalatedTo,
+      Header.escalated_at       as EscalatedAt,
+      dats_days_between(Header.request_date, $session.system_date) as DaysWaiting,
+
+      ///
       /// Administrative Fields
       ///
       @Semantics.user.createdBy: true
@@ -47,5 +58,6 @@ define view entity ZSO_R_REQ_H
       ///
       /// Associations
       ///
-      _Items
+      _Items,
+      _History
 }

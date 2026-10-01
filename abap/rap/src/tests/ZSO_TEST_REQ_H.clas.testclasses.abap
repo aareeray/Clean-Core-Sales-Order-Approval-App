@@ -68,7 +68,24 @@ CLASS zso_test_req_h DEFINITION
       test_reject_with_reason             FOR TESTING,
       test_reject_no_reason               FOR TESTING,
       test_resubmit_rejected              FOR TESTING,
-      test_resubmit_approved              FOR TESTING.
+      test_resubmit_approved              FOR TESTING,
+
+      "--- Enterprise Negative & Routing Tests ---
+      should_reject_invalid_customer             FOR TESTING,
+      should_reject_zero_or_negative_amount      FOR TESTING,
+      should_reject_missing_rejection_reason     FOR TESTING,
+      should_not_allow_duplicate_submit          FOR TESTING,
+      should_not_allow_approve_when_not_pending  FOR TESTING,
+      should_not_allow_reject_when_not_pending   FOR TESTING,
+      should_not_allow_resubmit_when_not_rejected FOR TESTING,
+      should_prevent_unauthorized_approval       FOR TESTING,
+      should_route_based_on_configurable_matrix  FOR TESTING,
+      should_route_high_value_request_to_director FOR TESTING,
+      should_fail_when_approval_rules_overlap    FOR TESTING,
+      should_create_history_entry_after_approval FOR TESTING,
+      should_set_sla_due_date_on_submission      FOR TESTING,
+      should_handle_sla_escalation               FOR TESTING,
+      should_simulate_approval_without_persisting FOR TESTING.
 
 ENDCLASS.
 
@@ -640,6 +657,245 @@ CLASS zso_test_req_h IMPLEMENTATION.
     ).
 
     assert_has_failed( it_failed = lt_failed iv_context = 'resubmit_approved' ).
+  ENDMETHOD.
+
+  "=========================================================================
+  " ENTERPRISE TEST IMPLEMENTATIONS
+  "=========================================================================
+
+  METHOD should_reject_invalid_customer.
+    create_test_header( iv_customer = '' ).
+    DATA lt_keys TYPE TABLE FOR VALIDATION zso_r_req_h\\SalesOrderRequest~validateCustomer.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+
+    mo_cut->validateCustomer(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'should_reject_invalid_customer' ).
+  ENDMETHOD.
+
+  METHOD should_reject_zero_or_negative_amount.
+    create_test_header( iv_amount = -500 ).
+    DATA lt_keys TYPE TABLE FOR VALIDATION zso_r_req_h\\SalesOrderRequest~validateAmount.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+
+    mo_cut->validateAmount(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'should_reject_zero_or_negative_amount' ).
+  ENDMETHOD.
+
+  METHOD should_reject_missing_rejection_reason.
+    create_test_header( iv_status = 'REJECTED' iv_rejection = '' ).
+    DATA lt_keys TYPE TABLE FOR VALIDATION zso_r_req_h\\SalesOrderRequest~validateRejectionReason.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+
+    mo_cut->validateRejectionReason(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'should_reject_missing_rejection_reason' ).
+  ENDMETHOD.
+
+  METHOD should_not_allow_duplicate_submit.
+    create_test_header( iv_status = 'PENDING' ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~submit.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~submit.
+
+    mo_cut->submit(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'duplicate submit blocked' ).
+  ENDMETHOD.
+
+  METHOD should_not_allow_approve_when_not_pending.
+    create_test_header( iv_status = 'DRAFT' ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~approve.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~approve.
+
+    mo_cut->approve(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'approve when not pending blocked' ).
+  ENDMETHOD.
+
+  METHOD should_not_allow_reject_when_not_pending.
+    create_test_header( iv_status = 'APPROVED' ).
+    DATA lt_keys TYPE tt_keys_rj.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid %param-RejectionReason = 'Too late' ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~reject.
+
+    mo_cut->reject(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'reject when approved blocked' ).
+  ENDMETHOD.
+
+  METHOD should_not_allow_resubmit_when_not_rejected.
+    create_test_header( iv_status = 'PENDING' ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~resubmit.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~resubmit.
+
+    mo_cut->resubmit(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_has_failed( it_failed = lt_failed iv_context = 'resubmit non-rejected blocked' ).
+  ENDMETHOD.
+
+  METHOD should_prevent_unauthorized_approval.
+    create_test_header( iv_status = 'PENDING' iv_approver = 'DIR_OTHER' ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~approve.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_auth TYPE TABLE FOR INSTANCE AUTHORIZATION RESULT zso_r_req_h\\SalesOrderRequest.
+    DATA lt_req_auth TYPE if_abap_behv=>t_authorizations.
+
+    mo_cut->get_instance_authorizations(
+      EXPORTING keys     = lt_keys
+                requested_authorizations = lt_req_auth
+      CHANGING  result   = lt_auth
+    ).
+    cl_abap_unit_assert=>assert_equals(
+      exp = if_abap_behv=>auth-unauthorized
+      act = lt_auth[ 1 ]-%action-approve
+      msg = 'Unauthorized approver must receive auth-unauthorized'
+    ).
+  ENDMETHOD.
+
+  METHOD should_route_based_on_configurable_matrix.
+    zcl_so_routing_engine=>determine_route(
+      EXPORTING iv_amount           = '5000.00'
+                iv_currency         = 'EUR'
+      IMPORTING ev_primary_role     = DATA(lv_role)
+                ev_sla_hours        = DATA(lv_sla)
+    ).
+    cl_abap_unit_assert=>assert_equals( exp = 'MANAGER' act = lv_role msg = '5000 EUR should route to MANAGER' ).
+    cl_abap_unit_assert=>assert_equals( exp = 24 act = lv_sla msg = 'MANAGER SLA should be 24h' ).
+  ENDMETHOD.
+
+  METHOD should_route_high_value_request_to_director.
+    zcl_so_routing_engine=>determine_route(
+      EXPORTING iv_amount           = '75000.00'
+                iv_currency         = 'EUR'
+      IMPORTING ev_primary_role     = DATA(lv_role)
+                ev_sla_hours        = DATA(lv_sla)
+    ).
+    cl_abap_unit_assert=>assert_equals( exp = 'DIRECTOR' act = lv_role msg = '75000 EUR should route to DIRECTOR' ).
+  ENDMETHOD.
+
+  METHOD should_fail_when_approval_rules_overlap.
+    DATA lt_conflict_rules TYPE zcl_so_routing_engine=>tt_rules.
+    lt_conflict_rules = VALUE #(
+      ( rule_id = 'R1' approval_level = '01' min_amount = '1000' max_amount = '5000' currency = 'EUR' approver_role = 'MGR' is_active = abap_true )
+      ( rule_id = 'R2' approval_level = '01' min_amount = '4000' max_amount = '8000' currency = 'EUR' approver_role = 'SRM' is_active = abap_true )
+    ).
+    zcl_so_routing_engine=>validate_rules(
+      EXPORTING it_rules  = lt_conflict_rules
+      IMPORTING ev_is_valid = DATA(lv_valid)
+                et_issues   = DATA(lt_issues)
+    ).
+    cl_abap_unit_assert=>assert_equals( exp = abap_false act = lv_valid msg = 'Overlapping amount ranges must be invalid' ).
+  ENDMETHOD.
+
+  METHOD should_create_history_entry_after_approval.
+    create_test_header( iv_status = 'PENDING' iv_approver = sy-uname ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~approve.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~approve.
+
+    mo_cut->approve(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_no_failed( it_failed = lt_failed iv_context = 'approve logged history' ).
+    cl_abap_unit_assert=>assert_equals( exp = 'APPROVED' act = lt_result[ 1 ]-%param-Status ).
+  ENDMETHOD.
+
+  METHOD should_set_sla_due_date_on_submission.
+    create_test_header( iv_status = 'DRAFT' iv_amount = '12000' ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~submit.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~submit.
+
+    mo_cut->submit(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_no_failed( it_failed = lt_failed iv_context = 'submit calculates SLA' ).
+    cl_abap_unit_assert=>assert_equals( exp = 'ON_TRACK' act = lt_result[ 1 ]-%param-SlaStatus ).
+    cl_abap_unit_assert=>assert_not_initial( act = lt_result[ 1 ]-%param-ApprovalDueDate ).
+  ENDMETHOD.
+
+  METHOD should_handle_sla_escalation.
+    create_test_header( iv_status = 'PENDING' iv_approver = sy-uname ).
+    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zso_r_req_h\\SalesOrderRequest~escalate.
+    APPEND VALUE #( %tky-%key-RequestId = mv_test_uuid ) TO lt_keys.
+    DATA lt_failed TYPE TABLE FOR FAILED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_reported TYPE TABLE FOR REPORTED EARLY zso_r_req_h\\SalesOrderRequest.
+    DATA lt_result TYPE TABLE FOR ACTION RESULT zso_r_req_h\\SalesOrderRequest~escalate.
+
+    mo_cut->escalate(
+      EXPORTING keys     = lt_keys
+      CHANGING  failed   = lt_failed
+                reported = lt_reported
+                result   = lt_result
+    ).
+    assert_no_failed( it_failed = lt_failed iv_context = 'escalation success' ).
+    cl_abap_unit_assert=>assert_equals( exp = 'ESCALATED' act = lt_result[ 1 ]-%param-SlaStatus ).
+    cl_abap_unit_assert=>assert_equals( exp = 1 act = lt_result[ 1 ]-%param-EscalationLevel ).
+  ENDMETHOD.
+
+  METHOD should_simulate_approval_without_persisting.
+    zcl_so_routing_engine=>simulate_route(
+      EXPORTING iv_amount     = '60000.00'
+                iv_currency   = 'EUR'
+      IMPORTING et_steps      = DATA(lt_steps)
+                ev_is_valid   = DATA(lv_valid)
+                ev_step_count = DATA(lv_count)
+    ).
+    cl_abap_unit_assert=>assert_equals( exp = abap_true act = lv_valid ).
+    cl_abap_unit_assert=>assert_not_initial( act = lt_steps ).
   ENDMETHOD.
 
 ENDCLASS.

@@ -13,50 +13,94 @@
   description:    { type: #STANDARD, value: 'CustomerId' }
 }
 
-///
-/// Fiori Elements: KPI / Quick View (optional, can remove if not used)
-///
-@UI.chart: [{
-  qualifier:             'TotalAmountChart',
-  chartType:             #BAR,
-  title:                 'Total Amount',
-  measures:              ['TotalAmount'],
-  measureAttributes: [{
-    measure:    'TotalAmount',
-    role:       #AXIS_1,
-    asDataPoint: true
-  }]
-}]
-
 define view entity ZSO_C_REQ_H
   provider contract transactional_query
   as projection on ZSO_R_REQ_H
 
 {
       ///
-      /// Object Page Facets (defined on any field — here on the first field)
+      /// Object Page Header & Body Facets
       ///
       @UI.facet: [
-        ///  General Information section
-        { id:            'GeneralInfo',
-          type:          #IDENTIFICATION_REFERENCE,
-          label:         'General Information',
-          position:      10 },
-        ///  Items child table
-        { id:            'Items',
-          type:          #LINEITEM_REFERENCE,
-          label:         'Items',
-          position:      20,
-          targetElement: '_Items' },
-        ///  Approval details (Approver + Rejection Reason)
-        { id:            'ApprovalDetails',
-          type:          #IDENTIFICATION_REFERENCE,
-          label:         'Approval Details',
-          position:      30 }
+        /// Header Facet 1: Total Amount DataPoint
+        { id:              'HeaderAmount',
+          type:            #DATAPOINT_REFERENCE,
+          purpose:         #HEADER,
+          targetQualifier: 'AmountDataPoint',
+          position:        10 },
+
+        /// Header Facet 2: Status DataPoint
+        { id:              'HeaderStatus',
+          type:            #DATAPOINT_REFERENCE,
+          purpose:         #HEADER,
+          targetQualifier: 'StatusDataPoint',
+          position:        20 },
+
+        /// Header Facet 3: Approver DataPoint
+        { id:              'HeaderApprover',
+          type:            #DATAPOINT_REFERENCE,
+          purpose:         #HEADER,
+          targetQualifier: 'ApproverDataPoint',
+          position:        30 },
+
+        /// Header Facet 4: Due Date DataPoint
+        { id:              'HeaderDueDate',
+          type:            #DATAPOINT_REFERENCE,
+          purpose:         #HEADER,
+          targetQualifier: 'DueDateDataPoint',
+          position:        40 },
+
+        /// Header Facet 5: SLA Status DataPoint
+        { id:              'HeaderSla',
+          type:            #DATAPOINT_REFERENCE,
+          purpose:         #HEADER,
+          targetQualifier: 'SlaDataPoint',
+          position:        50 },
+
+        /// Body Section 1: Request Details
+        { id:              'GeneralInfo',
+          type:            #IDENTIFICATION_REFERENCE,
+          label:           'Request Details',
+          position:        10 },
+
+        /// Body Section 2: Items
+        { id:              'Items',
+          type:            #LINEITEM_REFERENCE,
+          label:           'Items',
+          position:        20,
+          targetElement:   '_Items' },
+
+        /// Body Section 3: Approval History Audit Trail
+        { id:              'History',
+          type:            #LINEITEM_REFERENCE,
+          label:           'Approval History',
+          position:        30,
+          targetElement:   '_History' },
+
+        /// Body Section 4: SLA & Escalation
+        { id:              'SlaSection',
+          type:            #FIELDGROUP_REFERENCE,
+          label:           'SLA & Escalation',
+          targetQualifier: 'SlaGroup',
+          position:        40 },
+
+        /// Body Section 5: Comments & Rejection Reason
+        { id:              'RejectionSection',
+          type:            #FIELDGROUP_REFERENCE,
+          label:           'Comments & Rejection Reason',
+          targetQualifier: 'RejectionGroup',
+          position:        50 },
+
+        /// Body Section 6: Audit Information
+        { id:              'AuditSection',
+          type:            #FIELDGROUP_REFERENCE,
+          label:           'Audit Information',
+          targetQualifier: 'AuditGroup',
+          position:        60 }
       ]
 
       ///
-      /// REQUEST ID
+      /// REQUEST ID (Anchor)
       ///
       @UI.selectionField:  [{ position: 10 }]
       @UI.lineItem:        [{ position: 10, label: 'Request ID' }]
@@ -64,7 +108,7 @@ define view entity ZSO_C_REQ_H
   key RequestId,
 
       ///
-      /// CUSTOMER ID  — with value help
+      /// CUSTOMER ID — with value help
       ///
       @Consumption.valueHelpDefinition: [{
         entity:     { name: 'ZSO_VH_CUSTOMER', element: 'CustomerId' },
@@ -88,89 +132,125 @@ define view entity ZSO_C_REQ_H
       RequestDate,
 
       ///
-      /// TOTAL AMOUNT
+      /// TOTAL AMOUNT — Header DataPoint & LineItem
       ///
-      @UI.lineItem:       [{ position: 40, label: 'Total Amount' }]
+      @Semantics.amount.currencyCode: 'Currency'
+      @UI.dataPoint:      { qualifier: 'AmountDataPoint', title: 'Total Amount' }
+      @UI.lineItem:       [{ position: 40, label: 'Amount' }]
       @UI.identification: [{ position: 40, label: 'Total Amount' }]
-      @UI.dataPoint: {
-        qualifier:   'TotalAmount',
-        title:       'Total Amount',
-        criticalityCalculation: {
-          improvementDirection: #TARGET,
-          toleranceRangeLowValue: 1,
-          toleranceRangeHighValue: 9999
-        }
-      }
       TotalAmount,
 
       ///
-      /// CURRENCY  — hidden from UI, used as unit reference
+      /// CURRENCY
       ///
-      @UI.hidden: true
+      @Semantics.currencyCode: true
       Currency,
 
       ///
-      /// STATUS  — with value help + criticality colour
+      /// STATUS — Header DataPoint, LineItem, SelectionField
       ///
       @Consumption.valueHelpDefinition: [{
         entity: { name: 'ZSO_VH_STATUS', element: 'Status' }
       }]
-      @UI.selectionField: [{ position: 40 }]
-      @UI.lineItem: [{
-        position:                   50,
-        label:                      'Status',
-        criticality:                'StatusCriticality',
-        criticalityRepresentation:  #WITH_ICON
-      }]
-      @UI.identification: [{
-        position:    50,
-        label:       'Status',
-        criticality: 'StatusCriticality'
-      }]
-      @UI.textArrangement: #TEXT_ONLY
+      @UI.dataPoint:      { qualifier: 'StatusDataPoint', title: 'Status', criticality: 'StatusCriticality' }
+      @UI.selectionField: [{ position: 30 }]
+      @UI.lineItem:       [{ position: 50, label: 'Status', criticality: 'StatusCriticality' }]
+      @UI.identification: [{ position: 50, label: 'Status', criticality: 'StatusCriticality' }]
       Status,
 
       ///
-      /// APPROVER  — shown only in Approval Details facet (position > 50)
+      /// STATUS CRITICALITY (0=Neutral, 1=Negative, 2=Critical, 3=Positive)
       ///
+      @UI.hidden: true
+      case Status
+        when 'APPROVED' then cast( 3 as abap.int1 )
+        when 'PENDING'  then cast( 2 as abap.int1 )
+        when 'REJECTED' then cast( 1 as abap.int1 )
+        else                 cast( 0 as abap.int1 )
+      end as StatusCriticality,
+
+      ///
+      /// APPROVER — Header DataPoint & SelectionField
+      ///
+      @UI.dataPoint:      { qualifier: 'ApproverDataPoint', title: 'Approver' }
+      @UI.selectionField: [{ position: 50 }]
+      @UI.lineItem:       [{ position: 60, label: 'Approver' }]
       @UI.identification: [{ position: 60, label: 'Approver' }]
       Approver,
 
       ///
-      /// REJECTION REASON  — shown only in Approval Details facet
+      /// REJECTION REASON — in dedicated RejectionGroup facet
       ///
-      @UI.identification: [{ position: 70, label: 'Rejection Reason' }]
+      @UI.fieldGroup:     [{ qualifier: 'RejectionGroup', position: 10, label: 'Rejection Reason' }]
       RejectionReason,
 
       ///
-      /// Admin fields  — hidden from all Fiori Elements UI panels
+      /// APPROVAL DUE DATE — Header DataPoint & LineItem
+      ///
+      @UI.dataPoint:      { qualifier: 'DueDateDataPoint', title: 'Approval Due Date' }
+      @UI.selectionField: [{ position: 60 }]
+      @UI.lineItem:       [{ position: 70, label: 'Approval Due Date' }]
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 10, label: 'Approval Due Date' }]
+      ApprovalDueDate,
+
+      ///
+      /// SLA STATUS — Header DataPoint & LineItem
+      ///
+      @UI.dataPoint:      { qualifier: 'SlaDataPoint', title: 'SLA Status', criticality: 'SlaCriticality' }
+      @UI.selectionField: [{ position: 70 }]
+      @UI.lineItem:       [{ position: 80, label: 'SLA Status', criticality: 'SlaCriticality' }]
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 20, label: 'SLA Status', criticality: 'SlaCriticality' }]
+      SlaStatus,
+
+      ///
+      /// SLA CRITICALITY (3=Positive/On Track, 2=Critical/Due Soon, 1=Negative/Breached, 1=Escalated, 0=Neutral)
       ///
       @UI.hidden: true
+      case SlaStatus
+        when 'ON_TRACK'  then cast( 3 as abap.int1 )
+        when 'DUE_SOON'  then cast( 2 as abap.int1 )
+        when 'BREACHED'  then cast( 1 as abap.int1 )
+        when 'ESCALATED' then cast( 1 as abap.int1 )
+        else                  cast( 0 as abap.int1 )
+      end as SlaCriticality,
+
+      ///
+      /// DAYS WAITING
+      ///
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 30, label: 'Days Waiting' }]
+      DaysWaiting,
+
+      ///
+      /// ESCALATION DETAILS
+      ///
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 40, label: 'Escalation Level' }]
+      EscalationLevel,
+
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 50, label: 'Escalated To' }]
+      EscalatedTo,
+
+      @UI.fieldGroup:     [{ qualifier: 'SlaGroup', position: 60, label: 'Escalated At' }]
+      EscalatedAt,
+
+      ///
+      /// ADMINISTRATIVE AUDIT FIELDS
+      ///
+      @UI.lineItem:       [{ position: 90, label: 'Created By' }]
+      @UI.fieldGroup:     [{ qualifier: 'AuditGroup', position: 10, label: 'Created By' }]
       CreatedBy,
-      @UI.hidden: true
+
+      @UI.fieldGroup:     [{ qualifier: 'AuditGroup', position: 20, label: 'Created At' }]
       CreatedAt,
-      @UI.hidden: true
+
+      @UI.fieldGroup:     [{ qualifier: 'AuditGroup', position: 30, label: 'Changed By' }]
       ChangedBy,
-      @UI.hidden: true
+
+      @UI.fieldGroup:     [{ qualifier: 'AuditGroup', position: 40, label: 'Changed At' }]
       ChangedAt,
 
       ///
-      /// CRITICALITY VIRTUAL FIELD
-      /// Drives colour-coding: 3=Green(Approved) 2=Yellow(Pending) 1=Red(Rejected) 0=None(Draft)
+      /// ACTION BUTTONS (with feature and status control)
       ///
-      case Status
-        when 'APPROVED' then 3
-        when 'PENDING'  then 2
-        when 'REJECTED' then 1
-        else                 0
-      end                           as StatusCriticality : abap.int1,
-
-      ///
-      /// ACTIONS — declared as FOR_ACTION entries on @UI.lineItem / @UI.identification
-      /// Actual enable/disable is controlled by BDEF get_instance_features
-      ///
-
-      /// Submit — visible only when Status = DRAFT
       @UI.lineItem: [{
         type:        #FOR_ACTION,
         dataAction:  'submit',
@@ -220,6 +300,22 @@ define view entity ZSO_C_REQ_H
       @UI.hidden: #( Status <> 'PENDING' )
       RequestId as RejectAction     : redirected to ZSO_C_REQ_H,
 
+      /// Escalate — visible when Status = PENDING and SLA breached or due soon
+      @UI.lineItem: [{
+        type:       #FOR_ACTION,
+        dataAction: 'escalate',
+        label:      'Escalate',
+        position:   35
+      }]
+      @UI.identification: [{
+        type:       #FOR_ACTION,
+        dataAction: 'escalate',
+        label:      'Escalate',
+        position:   35
+      }]
+      @UI.hidden: #( Status <> 'PENDING' )
+      RequestId as EscalateAction   : redirected to ZSO_C_REQ_H,
+
       /// Resubmit — visible only when Status = REJECTED
       @UI.lineItem: [{
         type:       #FOR_ACTION,
@@ -237,7 +333,8 @@ define view entity ZSO_C_REQ_H
       RequestId as ResubmitAction   : redirected to ZSO_C_REQ_H,
 
       ///
-      /// Associations  — redirected to projection child
+      /// Associations
       ///
-      _Items : redirected to composition child ZSO_C_REQ_I
+      _Items   : redirected to composition child ZSO_C_REQ_I,
+      _History : redirected to composition child ZSO_C_REQ_HIST
 }

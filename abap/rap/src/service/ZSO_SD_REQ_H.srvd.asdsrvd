@@ -4,30 +4,36 @@
 /// Service Definition: ZSO_SD_REQ_H
 ///
 /// Exposes the CDS projection views for the Sales Order Approval app.
-/// Actions (submit, approve, reject, resubmit) defined in the BDEF are
-/// automatically included — they do not need to be listed here explicitly.
-///
-/// Entity set names used in OData URL:
-///   /SalesOrderRequest      → ZSO_C_REQ_H
-///   /SalesOrderRequest(key)/_Items  → ZSO_C_REQ_I  (via navigation)
+/// Actions (submit, approve, reject, resubmit, escalate, simulateApproval)
+/// defined in the BDEF are automatically included.
 ///
 define service ZSO_SD_REQ_H
 {
   ///
   /// Root entity — the primary entity set
   ///
-  expose ZSO_C_REQ_H as SalesOrderRequest;
+  expose ZSO_C_REQ_H    as SalesOrderRequest;
 
   ///
-  /// Child entity — accessible via navigation from SalesOrderRequest
-  /// and also directly as /SalesOrderItem
+  /// Child entities
   ///
-  expose ZSO_C_REQ_I as SalesOrderItem;
+  expose ZSO_C_REQ_I    as SalesOrderItem;
+  expose ZSO_C_REQ_HIST as SalesOrderHistory;
 
   ///
-  /// Value help entities — must be exposed so Fiori Elements can
-  /// resolve @Consumption.valueHelpDefinition references at runtime
+  /// Configuration Entity (Admin Projection View with Full UI Annotations)
+  ///
+  expose ZSO_C_APPR_RULE as ApprovalRuleAdmin;
+
+  ///
+  /// Operational Cockpit & Analytics (Phase 6)
+  ///
+  expose ZSO_C_REQ_ANALYTICS as OperationalCockpit;
+
+  ///
+  /// Value help entities
   ///
   expose ZSO_VH_STATUS   as StatusValueHelp;
   expose ZSO_VH_CUSTOMER as CustomerValueHelp;
+  expose ZSO_VH_MATERIAL as MaterialValueHelp;
 }

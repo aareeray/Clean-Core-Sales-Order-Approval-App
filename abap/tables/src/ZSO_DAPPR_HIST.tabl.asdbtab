@@ -1,0 +1,25 @@
+@EndUserText.label: 'Draft Table for ZSO_APPR_HIST'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_DAPPR_HIST {
+
+  key mandt         : mandt not null;
+  key history_id    : sysuuid_x16 not null;
+
+  "%admin"          : include sych_bdl_draft_admin_inc;
+
+  request_id        : sysuuid_x16;
+  step_no           : abap.int4;
+  action            : abap.char(20);
+  actor             : abap.char(12);
+  actor_role        : abap.char(20);
+  action_timestamp  : utclong;
+  comment_text      : abap.char(255);
+  previous_status   : ZSO_E_STATUS;
+  new_status        : ZSO_E_STATUS;
+  workflow_task_id  : abap.char(40);
+
+}

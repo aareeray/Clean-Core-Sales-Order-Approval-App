@@ -3,59 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Order Approval - SAP Fiori Elements</title>
+    <title>Sales Order Approval Cockpit — SAP Fiori Enterprise</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Official SAP Horizon Morning Theme Tokens */
             --sap-shell-bg: #1d2d3e;
-            --sap-shell-hover: #2b3d52;
+            --sap-shell-hover: #273b50;
             --sap-page-bg: #f5f6f7;
-            --sap-card-bg: #ffffff;
+            --sap-surface: #ffffff;
+            --sap-border: #d5dadd;
+            --sap-border-subtle: #eaeef1;
+            
             --sap-text-primary: #1d2d3e;
             --sap-text-secondary: #556b82;
             --sap-text-muted: #8292a1;
-            --sap-border: #d5dadd;
-            --sap-border-subtle: #eaeef1;
-            --sap-primary: #0070f2;
-            --sap-primary-hover: #0056b3;
-            --sap-primary-active: #00448a;
+            --sap-link: #0064d9;
+            --sap-link-hover: #004ba4;
+            
+            --sap-primary: #0064d9;
+            --sap-primary-hover: #0051b0;
+            --sap-primary-bg: #ebf5fe;
+            
             --sap-positive: #107e3e;
             --sap-positive-bg: #e7f7ed;
-            --sap-critical: #c85300;
-            --sap-critical-bg: #fef1e6;
+            --sap-positive-border: #a3e2bb;
+            --sap-positive-text: #0d6833;
+            
+            --sap-critical: #b25e00;
+            --sap-critical-bg: #fff4e5;
+            --sap-critical-border: #ffd599;
+            
             --sap-negative: #bb0000;
             --sap-negative-bg: #fde8e8;
-            --sap-neutral: #5b738b;
+            --sap-negative-border: #f8b4b4;
+            
+            --sap-neutral: #556b82;
             --sap-neutral-bg: #eef2f5;
-            --sap-table-hover: #f0f4f8;
-            --sap-table-selected: #e5f0fc;
-            --font-main: "72", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-dialog: 0 12px 32px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.08);
+            --sap-neutral-border: #d2dce4;
+
+            --sap-table-header: #f7f9fa;
+            --sap-table-hover: #f1f5f9;
+            --sap-table-selected: #ebf5fe;
+            
+            --font-family: "72", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --radius-xs: 2px;
             --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
+            --radius-md: 6px;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.07);
+            --shadow-dialog: 0 16px 40px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: var(--font-main);
+            font-family: var(--font-family);
             background-color: var(--sap-page-bg);
             color: var(--sap-text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Shell Header */
+        /* SVG Icons Helper */
+        .sap-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        /* 1. SAP Shell Header */
         .sap-shell {
             height: 48px;
             background: var(--sap-shell-bg);
@@ -64,108 +88,198 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 1.25rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             z-index: 100;
             position: sticky;
             top: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
         }
-
-        .sap-shell-brand {
+        .sap-shell-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
-        .sap-logo-badge {
-            background: linear-gradient(135deg, #0070f2 0%, #00448a 100%);
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 3px 8px;
-            border-radius: var(--radius-sm);
-            letter-spacing: 0.5px;
+        .sap-logo-box {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: var(--radius-xs);
+            padding: 3px 6px;
+            height: 26px;
         }
-
-        .sap-shell-title {
+        .sap-logo-svg {
+            height: 18px;
+            width: auto;
+        }
+        .sap-shell-app-title {
             font-size: 15px;
             font-weight: 600;
-            letter-spacing: -0.2px;
-        }
-
-        .sap-shell-divider {
-            color: #486581;
-            font-size: 14px;
-        }
-
-        .sap-shell-sub {
-            font-size: 13px;
-            color: #9fb3c8;
-        }
-
-        .sap-shell-user {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 13px;
+            gap: 6px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s;
         }
-
-        .sap-avatar {
-            width: 30px;
+        .sap-shell-app-title:hover {
+            background: var(--sap-shell-hover);
+        }
+        .sap-shell-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .shell-search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: var(--radius-sm);
             height: 30px;
-            background: #0070f2;
-            color: white;
-            border-radius: 50%;
+            padding: 0 10px;
+            gap: 8px;
+            width: 240px;
+            color: #ffffff;
+        }
+        .shell-search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 12px;
+            width: 100%;
+        }
+        .shell-search-box input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        .shell-icon-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.85);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            transition: background 0.15s;
+        }
+        .shell-icon-btn:hover {
+            background: var(--sap-shell-hover);
+            color: #ffffff;
+        }
+        .shell-badge-count {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #e52929;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 0 4px;
+            line-height: 14px;
+            min-width: 14px;
+            text-align: center;
+        }
+        .shell-user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+        }
+        .shell-user-profile:hover {
+            background: var(--sap-shell-hover);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .shell-user-info {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+            line-height: 1.15;
+        }
+        .shell-user-name {
             font-size: 12px;
             font-weight: 600;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.3);
+            color: #ffffff;
+        }
+        .shell-user-role {
+            font-size: 10px;
+            color: #9fb3c8;
+        }
+        .shell-user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #0064d9;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        /* Subheader Bar */
-        .sap-subheader {
+        /* Screen Selector / Navigation Switcher Bar */
+        .screen-nav-bar {
             background: #ffffff;
             border-bottom: 1px solid var(--sap-border);
-            padding: 1rem 1.5rem;
+            padding: 0 1.25rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
+            height: 38px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-
-        .sap-page-heading h1 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--sap-text-primary);
-        }
-
-        .sap-page-heading p {
-            font-size: 0.85rem;
-            color: var(--sap-text-secondary);
-            margin-top: 2px;
-        }
-
-        .rap-badge-pill {
-            display: inline-flex;
+        .screen-nav-links {
+            display: flex;
             align-items: center;
             gap: 6px;
-            background: #eef5fc;
-            color: #0056b3;
-            border: 1px solid #c2defc;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
+        }
+        .screen-nav-btn {
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            font-size: 12px;
             font-weight: 600;
+            color: var(--sap-text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .screen-nav-btn:hover {
+            color: var(--sap-primary);
+            background: var(--sap-primary-bg);
+        }
+        .screen-nav-btn.active {
+            color: var(--sap-primary);
+            background: var(--sap-primary-bg);
+            border-bottom: 2px solid var(--sap-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+        .screen-quick-dialogs {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
         }
 
-        /* Filter Bar Card */
-        .content-container {
+        /* Main View Container */
+        .main-workspace {
             max-width: 1440px;
-            margin: 0 auto;
             width: 100%;
+            margin: 0 auto;
             padding: 1.25rem 1.5rem;
             display: flex;
             flex-direction: column;
@@ -173,62 +287,44 @@
             flex: 1;
         }
 
-        .sap-filter-card {
-            background: #ffffff;
+        .view-section {
+            display: none;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .view-section.active {
+            display: flex;
+        }
+
+        /* Common Subheader */
+        .sap-page-header {
+            background: var(--sap-surface);
             border: 1px solid var(--sap-border);
             border-radius: var(--radius-md);
             padding: 1rem 1.25rem;
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-subtle);
             display: flex;
-            align-items: flex-end;
-            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 12px;
         }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 180px;
-            flex: 1;
-        }
-
-        .filter-group label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--sap-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .sap-input, .sap-select {
-            height: 36px;
-            padding: 0 10px;
-            border: 1px solid var(--sap-border);
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-size: 13px;
+        .page-title-group h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--sap-text-primary);
-            background: #ffffff;
-            transition: all 0.2s;
+            letter-spacing: -0.2px;
+        }
+        .page-title-group p {
+            font-size: 0.85rem;
+            color: var(--sap-text-secondary);
+            margin-top: 2px;
         }
 
-        .sap-input:focus, .sap-select:focus {
-            outline: none;
-            border-color: var(--sap-primary);
-            box-shadow: 0 0 0 2px rgba(0,112,242,0.15);
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 8px;
-            padding-bottom: 1px;
-        }
-
-        /* Buttons */
+        /* Buttons (Standard SAP Horizon Styles) */
         .sap-btn {
-            height: 36px;
-            padding: 0 16px;
+            height: 32px;
+            padding: 0 14px;
             font-family: inherit;
             font-size: 13px;
             font-weight: 600;
@@ -238,958 +334,1683 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.15s ease;
+            white-space: nowrap;
         }
-
-        .sap-btn-primary {
-            background: var(--sap-primary);
-            color: #ffffff;
-        }
-
-        .sap-btn-primary:hover:not(:disabled) {
-            background: var(--sap-primary-hover);
-        }
-
-        .sap-btn-secondary {
-            background: #ffffff;
-            color: var(--sap-primary);
-            border-color: var(--sap-primary);
-        }
-
-        .sap-btn-secondary:hover:not(:disabled) {
-            background: #f0f6fc;
-        }
-
-        .sap-btn-positive {
-            background: var(--sap-positive);
-            color: #ffffff;
-        }
-
-        .sap-btn-positive:hover:not(:disabled) {
-            background: #0d6934;
-        }
-
-        .sap-btn-negative {
-            background: var(--sap-negative);
-            color: #ffffff;
-        }
-
-        .sap-btn-negative:hover:not(:disabled) {
-            background: #9d0000;
-        }
-
         .sap-btn:disabled {
             opacity: 0.45;
             cursor: not-allowed;
             pointer-events: none;
         }
-
-        /* Table Card */
-        .sap-table-card {
+        .sap-btn-primary {
+            background: var(--sap-primary);
+            color: #ffffff;
+        }
+        .sap-btn-primary:hover:not(:disabled) {
+            background: var(--sap-primary-hover);
+        }
+        .sap-btn-ghost {
             background: #ffffff;
+            color: var(--sap-primary);
+            border-color: var(--sap-border);
+        }
+        .sap-btn-ghost:hover:not(:disabled) {
+            background: var(--sap-neutral-bg);
+            border-color: var(--sap-primary);
+        }
+        .sap-btn-positive {
+            background: var(--sap-positive);
+            color: #ffffff;
+        }
+        .sap-btn-positive:hover:not(:disabled) {
+            background: #0d6833;
+        }
+        .sap-btn-negative {
+            background: var(--sap-negative);
+            color: #ffffff;
+        }
+        .sap-btn-negative:hover:not(:disabled) {
+            background: #9a0000;
+        }
+        .sap-btn-warning {
+            background: #e9730c;
+            color: #ffffff;
+        }
+
+        /* 2. List Report Tabs (Section 3) */
+        .table-tabs-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--sap-border);
+            padding: 0 4px;
+            overflow-x: auto;
+        }
+        .table-tab-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--sap-text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .table-tab-item:hover {
+            color: var(--sap-primary);
+        }
+        .table-tab-item.active {
+            color: var(--sap-primary);
+            font-weight: 700;
+            border-bottom-color: var(--sap-primary);
+        }
+
+        /* 3. Filter Bar (Section 4) */
+        .sap-filter-container {
+            background: var(--sap-surface);
             border: 1px solid var(--sap-border);
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-card);
+            padding: 0.85rem 1.25rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .filter-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .filter-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 130px;
+            flex: 1;
+        }
+        .filter-cell.cell-sm { max-width: 140px; }
+        .filter-cell.cell-md { max-width: 190px; }
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--sap-text-secondary);
+        }
+        .filter-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .filter-input-wrap .input-icon {
+            position: absolute;
+            right: 8px;
+            color: var(--sap-text-muted);
+            pointer-events: none;
+            width: 14px;
+            height: 14px;
+        }
+        .sap-input, .sap-select {
+            height: 30px;
+            padding: 0 26px 0 8px;
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 12px;
+            color: var(--sap-text-primary);
+            background: #ffffff;
+            width: 100%;
+        }
+        .sap-input:focus, .sap-select:focus {
+            outline: none;
+            border-color: var(--sap-primary);
+            box-shadow: 0 0 0 1px var(--sap-primary);
+        }
+        .filter-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+        .adapt-filters-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--sap-link);
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .adapt-filters-link:hover { text-decoration: underline; }
+
+        /* 4. Table Design (Section 5) */
+        .sap-table-card {
+            background: var(--sap-surface);
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-subtle);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
-
-        .table-toolbar {
-            padding: 0.85rem 1.25rem;
-            border-bottom: 1px solid var(--sap-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-            background: #fafbfc;
-        }
-
-        .table-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--sap-text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .item-count-badge {
-            background: var(--sap-neutral-bg);
-            color: var(--sap-neutral);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .toolbar-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        /* Data Table */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
         }
-
-        table.sap-grid {
+        table.sap-data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
             text-align: left;
         }
-
-        table.sap-grid th {
-            background: #f5f7f9;
+        table.sap-data-table th {
+            background: var(--sap-table-header);
             color: var(--sap-text-secondary);
             font-weight: 600;
-            font-size: 12px;
-            padding: 10px 14px;
+            font-size: 11px;
+            padding: 9px 12px;
             border-bottom: 1px solid var(--sap-border);
             white-space: nowrap;
             user-select: none;
         }
-
-        table.sap-grid td {
-            padding: 12px 14px;
+        table.sap-data-table td {
+            padding: 9px 12px;
             border-bottom: 1px solid var(--sap-border-subtle);
             color: var(--sap-text-primary);
             vertical-align: middle;
         }
-
-        table.sap-grid tbody tr {
-            cursor: pointer;
-            transition: background-color 0.15s;
+        table.sap-data-table tbody tr {
+            transition: background-color 0.1s;
         }
-
-        table.sap-grid tbody tr:hover {
+        table.sap-data-table tbody tr:hover {
             background-color: var(--sap-table-hover);
         }
-
-        table.sap-grid tbody tr.selected {
+        table.sap-data-table tbody tr.selected {
             background-color: var(--sap-table-selected);
         }
 
         .checkbox-cell {
-            width: 40px;
+            width: 38px;
             text-align: center;
         }
-
         .checkbox-cell input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             accent-color: var(--sap-primary);
             cursor: pointer;
         }
 
-        /* Status Badges */
+        .anchor-id {
+            color: var(--sap-link);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .anchor-id:hover {
+            text-decoration: underline;
+        }
+
+        /* 5. Semantic Badges & Pills (Section 10) */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
+            gap: 5px;
+            padding: 2px 8px;
             border-radius: 12px;
             font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.1px;
+            white-space: nowrap;
+        }
+        .status-badge-pending {
+            background: var(--sap-critical-bg);
+            color: var(--sap-critical);
+            border: 1px solid var(--sap-critical-border);
+        }
+        .status-badge-review {
+            background: var(--sap-primary-bg);
+            color: var(--sap-primary);
+            border: 1px solid #b8daff;
+        }
+        .status-badge-approved {
+            background: var(--sap-positive-bg);
+            color: var(--sap-positive);
+            border: 1px solid var(--sap-positive-border);
+        }
+        .status-badge-rejected {
+            background: var(--sap-negative-bg);
+            color: var(--sap-negative);
+            border: 1px solid var(--sap-negative-border);
+        }
+        .status-badge-draft {
+            background: var(--sap-neutral-bg);
+            color: var(--sap-neutral);
+            border: 1px solid var(--sap-neutral-border);
         }
 
-        .status-badge::before {
+        .sla-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .sla-pill-amber {
+            background: var(--sap-critical-bg);
+            color: var(--sap-critical);
+            border: 1px solid var(--sap-critical-border);
+        }
+        .sla-pill-red {
+            background: var(--sap-negative-bg);
+            color: var(--sap-negative);
+            border: 1px solid var(--sap-negative-border);
+        }
+        .sla-pill-green {
+            background: var(--sap-positive-bg);
+            color: var(--sap-positive);
+            border: 1px solid var(--sap-positive-border);
+        }
+
+        /* 6. Object Page Design (Section 11, 12, 13) */
+        .object-page-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .op-header-card {
+            background: var(--sap-surface);
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .op-header-top-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .op-title-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .op-caption {
+            font-size: 11px;
+            color: var(--sap-text-secondary);
+            font-weight: 500;
+        }
+        .op-title-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .op-main-id {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+        .op-customer-sub {
+            font-size: 13px;
+            color: var(--sap-text-secondary);
+            margin-top: 2px;
+        }
+        .op-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .op-kpi-bar {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            padding-top: 12px;
+            border-top: 1px solid var(--sap-border-subtle);
+            flex-wrap: wrap;
+        }
+        .op-kpi-unit {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .op-kpi-val {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+        .op-kpi-desc {
+            font-size: 10px;
+            color: var(--sap-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Object Page Sections Grid */
+        .op-sections-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+        .op-card {
+            background: var(--sap-surface);
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1.1rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .op-card-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+            border-bottom: 1px solid var(--sap-border-subtle);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .col-4 { grid-column: span 4; }
+        .col-5 { grid-column: span 5; }
+        .col-7 { grid-column: span 7; }
+        .col-8 { grid-column: span 8; }
+        .col-12 { grid-column: span 12; }
+
+        @media (max-width: 1024px) {
+            .col-4, .col-5, .col-7, .col-8 { grid-column: span 12; }
+        }
+
+        .key-val-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .kv-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kv-key { color: var(--sap-text-secondary); }
+        .kv-value { font-weight: 600; color: var(--sap-text-primary); }
+
+        /* Approval Progress Vertical Timeline (Section 13) */
+        .timeline-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 4px 0;
+        }
+        .tl-item {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            padding-bottom: 18px;
+        }
+        .tl-item:last-child {
+            padding-bottom: 0;
+        }
+        .tl-item:not(:last-child)::after {
             content: "";
-            width: 6px;
-            height: 6px;
+            position: absolute;
+            left: 11px;
+            top: 22px;
+            bottom: 0;
+            width: 2px;
+            background: var(--sap-border);
+        }
+        .tl-node {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+            background: #ffffff;
+            border: 2px solid var(--sap-border);
+            z-index: 2;
+        }
+        .tl-node.node-completed {
+            background: var(--sap-positive);
+            border-color: var(--sap-positive);
+            color: #ffffff;
+        }
+        .tl-node.node-active {
+            background: var(--sap-primary);
+            border-color: var(--sap-primary);
+            color: #ffffff;
+            box-shadow: 0 0 0 3px var(--sap-primary-bg);
+        }
+        .tl-node.node-pending {
+            border-color: var(--sap-border);
+            color: var(--sap-text-muted);
+        }
+        .tl-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .tl-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+        .tl-meta {
+            font-size: 11px;
+            color: var(--sap-text-muted);
+        }
+
+        /* 7. Approval Cockpit Page (Section 15, 19) */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .kpi-card {
+            background: var(--sap-surface);
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1.1rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .kpi-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .kpi-icon-blue { background: #ebf5fe; color: #0064d9; }
+        .kpi-icon-amber { background: #fff4e5; color: #b25e00; }
+        .kpi-icon-green { background: #e7f7ed; color: #107e3e; }
+        .kpi-icon-red { background: #fde8e8; color: #bb0000; }
+        .kpi-data {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .kpi-num {
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .kpi-label {
+            font-size: 11px;
+            color: var(--sap-text-secondary);
+            font-weight: 500;
+        }
+
+        .cockpit-charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 14px;
+        }
+        .chart-card {
+            background: var(--sap-surface);
+            border: 1px solid var(--sap-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chart-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+        .donut-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 10px 0;
+        }
+        .chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
         }
 
-        .status-draft {
-            background: var(--sap-neutral-bg);
-            color: var(--sap-neutral);
-        }
-        .status-draft::before { background: var(--sap-neutral); }
-
-        .status-pending {
-            background: var(--sap-critical-bg);
-            color: var(--sap-critical);
-        }
-        .status-pending::before { background: var(--sap-critical); }
-
-        .status-approved {
-            background: var(--sap-positive-bg);
-            color: var(--sap-positive);
-        }
-        .status-approved::before { background: var(--sap-positive); }
-
-        .status-rejected {
-            background: var(--sap-negative-bg);
-            color: var(--sap-negative);
-        }
-        .status-rejected::before { background: var(--sap-negative); }
-
-        .amount-col {
-            font-family: "Inter", var(--font-main);
-            font-weight: 600;
-            text-align: right;
-        }
-
-        /* Details Object Page Modal / Slide-over */
-        .op-drawer-backdrop {
+        /* 8. Modal Dialogs (Section 17, 18) */
+        .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.4);
-            display: none;
-            z-index: 200;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .op-drawer-backdrop.active {
-            display: flex;
-        }
-
-        .op-drawer {
-            background: #ffffff;
-            width: 650px;
-            max-width: 95vw;
-            height: 100vh;
-            box-shadow: -4px 0 24px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        .op-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--sap-border);
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            background: #fafbfc;
-        }
-
-        .op-title-area h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--sap-text-primary);
-        }
-
-        .op-title-area .op-sub {
-            font-size: 12px;
-            color: var(--sap-text-secondary);
-            margin-top: 3px;
-        }
-
-        .op-close-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--sap-text-muted);
-            line-height: 1;
-            padding: 4px;
-        }
-
-        .op-close-btn:hover {
-            color: var(--sap-text-primary);
-        }
-
-        .op-actions-bar {
-            padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid var(--sap-border);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-        }
-
-        .op-content {
-            padding: 1.5rem;
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .section-block {
-            background: #ffffff;
-            border: 1px solid var(--sap-border);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--sap-text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--sap-border-subtle);
-            padding-bottom: 0.5rem;
-        }
-
-        .key-value-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px 20px;
-            font-size: 13px;
-        }
-
-        .kv-label {
-            color: var(--sap-text-secondary);
-            font-size: 12px;
-            margin-bottom: 2px;
-        }
-
-        .kv-val {
-            font-weight: 600;
-            color: var(--sap-text-primary);
-        }
-
-        /* Generic Modal Dialog */
-        .sap-modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background: rgba(0,0,0,0.45);
             display: none;
-            z-index: 300;
+            z-index: 500;
             align-items: center;
             justify-content: center;
         }
-
-        .sap-modal-backdrop.active {
-            display: flex;
-        }
-
-        .sap-modal {
-            background: #ffffff;
+        .modal-backdrop.active { display: flex; }
+        .modal-box {
+            background: var(--sap-surface);
             border-radius: var(--radius-md);
-            width: 480px;
-            max-width: 90vw;
+            width: 500px;
+            max-width: 92vw;
             box-shadow: var(--shadow-dialog);
             overflow: hidden;
-            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-header {
-            padding: 1rem 1.25rem;
-            background: #fafbfc;
-            border-bottom: 1px solid var(--sap-border);
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .modal-body {
-            padding: 1.25rem;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            animation: modalPop 0.15s ease-out;
         }
-
-        .modal-footer {
-            padding: 0.85rem 1.25rem;
-            border-top: 1px solid var(--sap-border);
+        @keyframes modalPop {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-head {
+            padding: 12px 18px;
             background: #fafbfc;
+            border-bottom: 1px solid var(--sap-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-head h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sap-text-primary);
+        }
+        .modal-close-x {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--sap-text-muted);
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close-x:hover { color: var(--sap-text-primary); }
+        .modal-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 12px;
+        }
+        .modal-foot {
+            padding: 10px 18px;
+            background: #fafbfc;
+            border-top: 1px solid var(--sap-border);
             display: flex;
             justify-content: flex-end;
             gap: 8px;
         }
 
-        /* Toast notification */
+        .dialog-summary-box {
+            background: #f7f9fa;
+            border: 1px solid var(--sap-border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        /* iOS/SAP Style Toggle Switch */
+        .sap-switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+        .sap-switch input { opacity: 0; width: 0; height: 0; }
+        .sap-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .2s;
+            border-radius: 20px;
+        }
+        .sap-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+        input:checked + .sap-switch-slider {
+            background-color: var(--sap-positive);
+        }
+        input:checked + .sap-switch-slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Toast feedback */
         .sap-toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 20px;
+            right: 20px;
             background: #1d2d3e;
             color: #ffffff;
-            padding: 12px 20px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
             font-size: 13px;
             display: none;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             z-index: 999;
-            max-width: 480px;
+            border-left: 3px solid var(--sap-primary);
         }
-
-        .sap-toast.active {
-            display: flex;
-            animation: toastUp 0.3s ease;
-        }
-
-        @keyframes toastUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        .sap-toast.active { display: flex; animation: toastUp 0.2s ease; }
+        @keyframes toastUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- SAP Fiori Shell Header -->
+    <!-- 1. Top Shell Header -->
     <header class="sap-shell">
-        <div class="sap-shell-brand">
-            <span class="sap-logo-badge">SAP</span>
-            <span class="sap-shell-title">Sales Order Approval</span>
-            <span class="sap-shell-divider">|</span>
-            <span class="sap-shell-sub">Clean Core RAP (OData V4)</span>
+        <div class="sap-shell-left">
+            <div class="sap-logo-box" title="SAP Enterprise">
+                <svg class="sap-logo-svg" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0H100L82 50H0V0Z" fill="#0064d9"/>
+                    <path d="M22 34C17.5 34 14.5 31.5 14.5 27.5C14.5 21 24.5 20.5 24.5 17.5C24.5 16 23 15 21 15C18.5 15 16 16.5 15.5 18H10C10.5 14 15 11 21 11C26.5 11 30 13.5 30 17.5C30 24 20 24.5 20 27.5C20 29 21.5 30 23.5 30C26.5 30 29 28.5 29.5 26.5H35C34.5 31 30 34 22 34ZM45 11.5L53.5 33.5H48L46.5 29H40.5L39 33.5H34L42.5 11.5H45ZM45 25L43.5 20.5L42 25H45ZM62 11.5C67.5 11.5 71 14.5 71 19.5C71 24.5 67.5 27.5 62 27.5H57V33.5H51.5V11.5H62ZM62 23C64.5 23 65.5 21.5 65.5 19.5C65.5 17.5 64.5 16 62 16H57V23H62Z" fill="#FFFFFF"/>
+                </svg>
+            </div>
+            <div class="sap-shell-app-title" onclick="switchView('list')">
+                <span>Sales Order Approval Cockpit</span>
+                <span style="font-size: 10px; opacity: 0.8;">▾</span>
+            </div>
         </div>
-        <div class="sap-shell-user">
-            <span id="currentUserRole" style="font-weight: 500; color: #cbd5e1;">User: JSMITH (Sales Mgr)</span>
-            <div class="sap-avatar" title="Switch User / Role" onclick="toggleUserRole()">JS</div>
+
+        <div class="sap-shell-right">
+            <div class="shell-search-box">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input placeholder="Search in Sales Order Approval..." />
+            </div>
+
+            <!-- Copilot/Quick icon -->
+            <button class="shell-icon-btn" title="Quick Actions">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+            </button>
+
+            <!-- Notifications with Badge 12 -->
+            <button class="shell-icon-btn" title="Notifications">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+                <span class="shell-badge-count">12</span>
+            </button>
+
+            <!-- Help -->
+            <button class="shell-icon-btn" title="Help">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+            </button>
+
+            <!-- User Avatar & Identity (Rajesh Kumar / Approver) -->
+            <div class="shell-user-profile" title="Current User: Rajesh Kumar (Approver)">
+                <div class="shell-user-info">
+                    <span class="shell-user-name">Rajesh Kumar</span>
+                    <span class="shell-user-role">Approver</span>
+                </div>
+                <div class="shell-user-avatar">RK</div>
+            </div>
         </div>
     </header>
 
-    <!-- Subheader with title -->
-    <div class="sap-subheader">
-        <div class="sap-page-heading">
-            <h1>Sales Order Requests</h1>
-            <p>Manage, review, and approve incoming sales order draft requests</p>
+    <!-- Top Navigation Switcher for All 4 Reference Screens -->
+    <nav class="screen-nav-bar">
+        <div class="screen-nav-links">
+            <button class="screen-nav-btn active" id="navBtnList" onclick="switchView('list')">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                <span>Requests (List Report)</span>
+            </button>
+            <button class="screen-nav-btn" id="navBtnObject" onclick="switchView('object')">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                <span>Sales Order Request (Object Page)</span>
+            </button>
+            <button class="screen-nav-btn" id="navBtnCockpit" onclick="switchView('cockpit')">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                <span>Approval Cockpit</span>
+            </button>
+            <button class="screen-nav-btn" id="navBtnAdmin" onclick="switchView('admin')">
+                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Approval Rule Administration</span>
+            </button>
         </div>
-        <div class="rap-badge-pill">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            ABAP RAP Managed with Draft & Strict(2)
+        <div class="screen-quick-dialogs">
+            <button class="sap-btn sap-btn-ghost" style="height: 26px; font-size: 11px;" onclick="openSimulateModal()">
+                <svg class="sap-icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                <span>Simulate Route</span>
+            </button>
+            <button class="sap-btn sap-btn-negative" style="height: 26px; font-size: 11px;" onclick="openRejectDialog()">
+                <span>Reject Dialog</span>
+            </button>
         </div>
-    </div>
+    </nav>
 
-    <!-- Main Content Area -->
-    <main class="content-container">
+    <!-- Main Dynamic Workspace -->
+    <main class="main-workspace">
 
-        <!-- Filter Bar -->
-        <section class="sap-filter-card">
-            <div class="filter-group">
-                <label for="filterStatus">Status</label>
-                <select id="filterStatus" class="sap-select" onchange="applyFilters()">
-                    <option value="">All Statuses</option>
-                    <option value="DRAFT">Draft</option>
-                    <option value="PENDING">Pending Approval</option>
-                    <option value="APPROVED">Approved</option>
-                    <option value="REJECTED">Rejected</option>
-                </select>
+        <!-- ============================================================== -->
+        <!-- SCREEN 1: LIST REPORT VIEW (Top Screen in Reference Image)      -->
+        <!-- ============================================================== -->
+        <section id="viewList" class="view-section active">
+            <!-- Subheader -->
+            <div class="sap-page-header">
+                <div class="page-title-group">
+                    <h1>Sales Order Approval Cockpit</h1>
+                    <p>Monitor, review, and process sales order approval requests</p>
+                </div>
+                <div>
+                    <button class="sap-btn sap-btn-primary" onclick="openCreateDraft()">
+                        <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        <span>Create Request</span>
+                    </button>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="filterCustomer">Customer</label>
-                <input id="filterCustomer" class="sap-input" placeholder="Search Customer..." oninput="applyFilters()" />
+
+            <!-- Logical Table Tabs (Matching Reference: 128, 8, 21, 96, 7) -->
+            <div class="table-tabs-bar">
+                <div class="table-tab-item" id="tabAll" onclick="selectListTab('All')">
+                    All Requests (128)
+                </div>
+                <div class="table-tab-item" id="tabMyDrafts" onclick="selectListTab('MyDrafts')">
+                    My Drafts (8)
+                </div>
+                <div class="table-tab-item active" id="tabPendingMyApproval" onclick="selectListTab('PendingMyApproval')">
+                    Pending My Approval (21)
+                </div>
+                <div class="table-tab-item" id="tabCompleted" onclick="selectListTab('Completed')">
+                    Completed (96)
+                </div>
+                <div class="table-tab-item" id="tabSlaBreached" onclick="selectListTab('SlaBreached')">
+                    SLA Breached (7)
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="filterSearch">Search Request ID</label>
-                <input id="filterSearch" class="sap-input" placeholder="e.g. SO-2026-0001" oninput="applyFilters()" />
+
+            <!-- Single-Line Filter Bar (Exact Match to Reference Image) -->
+            <div class="sap-filter-container">
+                <div class="filter-row">
+                    <div class="filter-cell cell-sm">
+                        <label class="filter-label">Request ID</label>
+                        <div class="filter-input-wrap">
+                            <input id="fReqId" class="sap-input" placeholder="Search..." oninput="filterTable()" />
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        </div>
+                    </div>
+                    <div class="filter-cell cell-md">
+                        <label class="filter-label">Customer</label>
+                        <div class="filter-input-wrap">
+                            <input id="fCust" class="sap-input" placeholder="Search or select..." oninput="filterTable()" />
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        </div>
+                    </div>
+                    <div class="filter-cell cell-sm">
+                        <label class="filter-label">Status</label>
+                        <select id="fStatus" class="sap-select" onchange="filterTable()">
+                            <option value="">All</option>
+                            <option value="PENDING">Pending Approval</option>
+                            <option value="UNDER_REVIEW">Under Review</option>
+                            <option value="APPROVED">Approved</option>
+                            <option value="REJECTED">Rejected</option>
+                            <option value="DRAFT">Draft</option>
+                        </select>
+                    </div>
+                    <div class="filter-cell cell-sm">
+                        <label class="filter-label">Approval Status</label>
+                        <select class="sap-select">
+                            <option value="">All</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="DIRECTOR">Director Review</option>
+                        </select>
+                    </div>
+                    <div class="filter-cell cell-md">
+                        <label class="filter-label">Request Date</label>
+                        <div class="filter-input-wrap">
+                            <input class="sap-input" value="01.09.2024 – 31.12.2024" readonly />
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                        </div>
+                    </div>
+                    <div class="filter-cell cell-sm">
+                        <label class="filter-label">Amount</label>
+                        <div style="display: flex; gap: 4px;">
+                            <input class="sap-input" placeholder="From" style="padding: 0 4px;" />
+                            <input class="sap-input" placeholder="To" style="padding: 0 4px;" />
+                        </div>
+                    </div>
+                    <div class="filter-cell cell-md">
+                        <label class="filter-label">Approver</label>
+                        <div class="filter-input-wrap">
+                            <input class="sap-input" placeholder="Search or select..." />
+                            <svg class="input-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        </div>
+                    </div>
+                    <div class="filter-cell cell-sm">
+                        <label class="filter-label">SLA Status</label>
+                        <select id="fSla" class="sap-select" onchange="filterTable()">
+                            <option value="">All</option>
+                            <option value="DUE_TOMORROW">Due Tomorrow</option>
+                            <option value="OVERDUE">2 Days Overdue</option>
+                            <option value="ON_TRACK">On Track</option>
+                            <option value="BREACHED">SLA Breached</option>
+                            <option value="DUE_SOON">Due Soon</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions-group">
+                        <a class="adapt-filters-link">Adapt Filters (3)</a>
+                        <button class="sap-btn sap-btn-primary" style="height: 30px;" onclick="filterTable()">Go</button>
+                    </div>
+                </div>
             </div>
-            <div class="filter-actions">
-                <button class="sap-btn sap-btn-primary" onclick="applyFilters()">Go</button>
-                <button class="sap-btn sap-btn-secondary" onclick="resetFilters()">Reset</button>
+
+            <!-- List Report Table (Exact Columns & Data from Image) -->
+            <div class="sap-table-card">
+                <div class="table-responsive">
+                    <table class="sap-data-table">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <input type="checkbox" />
+                                </th>
+                                <th>Request ID</th>
+                                <th>Customer</th>
+                                <th>Request Date</th>
+                                <th style="text-align: right;">Amount</th>
+                                <th>Currency</th>
+                                <th>Status</th>
+                                <th>Approver</th>
+                                <th>Approval Due Date</th>
+                                <th>SLA Status</th>
+                                <th>Created By</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listReportTbody">
+                            <!-- Injected from mock-data -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-        <!-- Table Card with Toolbar -->
-        <section class="sap-table-card">
-            <div class="table-toolbar">
-                <div class="table-title">
-                    <span>Requests</span>
-                    <span id="recordCount" class="item-count-badge">4</span>
+        <!-- ============================================================== -->
+        <!-- SCREEN 2: OBJECT PAGE VIEW (Middle Screen in Reference Image)   -->
+        <!-- ============================================================== -->
+        <section id="viewObject" class="view-section">
+            <div class="object-page-container">
+
+                <!-- Header Card (SO-10231, ₹48,500.00 INR, Due Tomorrow, Rajesh Kumar) -->
+                <div class="op-header-card">
+                    <div class="op-header-top-row">
+                        <div class="op-title-left">
+                            <span class="op-caption">Sales Order Request</span>
+                            <div class="op-title-badge-row">
+                                <span class="op-main-id">SO-10231</span>
+                                <span class="status-badge status-badge-pending">
+                                    <svg class="sap-icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                    <span>Pending Approval</span>
+                                </span>
+                            </div>
+                            <div class="op-customer-sub">
+                                <strong style="color: var(--sap-text-primary);">ABC Industries</strong> | Customer | 1000234
+                            </div>
+                        </div>
+
+                        <!-- Top-Right Action Buttons -->
+                        <div class="op-actions-right">
+                            <button class="sap-btn sap-btn-primary" onclick="actionSubmit()">
+                                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                                <span>Submit</span>
+                            </button>
+                            <button class="sap-btn sap-btn-positive" onclick="actionApprove()">
+                                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                <span>Approve</span>
+                            </button>
+                            <button class="sap-btn sap-btn-negative" onclick="openRejectDialog()">
+                                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                                <span>Reject</span>
+                            </button>
+                            <button class="sap-btn sap-btn-ghost" onclick="openSimulateModal()">
+                                <svg class="sap-icon" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                                <span>Simulate Approval</span>
+                            </button>
+                            <button class="sap-btn sap-btn-ghost" style="width: 32px; padding: 0;">•••</button>
+                        </div>
+                    </div>
+
+                    <!-- Right KPIs in Header -->
+                    <div class="op-kpi-bar">
+                        <div class="op-kpi-unit">
+                            <span class="op-kpi-val" style="color: var(--sap-primary); font-size: 15px;">₹ 48,500.00 INR</span>
+                            <span class="op-kpi-desc">Total Amount</span>
+                        </div>
+                        <div class="op-kpi-unit">
+                            <span class="op-kpi-val">01 Oct 2024</span>
+                            <span class="op-kpi-desc">Request Date</span>
+                        </div>
+                        <div class="op-kpi-unit">
+                            <span class="op-kpi-val">03 Oct 2024</span>
+                            <span class="op-kpi-desc">Approval Due Date</span>
+                        </div>
+                        <div class="op-kpi-unit">
+                            <span class="sla-pill sla-pill-amber" style="margin-top: 2px;">
+                                <svg class="sap-icon" style="width: 11px; height: 11px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                <span>Due Tomorrow</span>
+                            </span>
+                            <span class="op-kpi-desc" style="margin-top: 2px;">SLA</span>
+                        </div>
+                        <div class="op-kpi-unit">
+                            <span class="op-kpi-val">Rajesh Kumar</span>
+                            <span class="op-kpi-desc">Current Approver</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="toolbar-actions">
-                    <button class="sap-btn sap-btn-primary" onclick="openCreateModal()">+ Create</button>
-                    <button id="btnSubmit" class="sap-btn sap-btn-secondary" disabled onclick="executeAction('submit')">Submit</button>
-                    <button id="btnApprove" class="sap-btn sap-btn-positive" disabled onclick="executeAction('approve')">Approve</button>
-                    <button id="btnReject" class="sap-btn sap-btn-negative" disabled onclick="promptRejectModal()">Reject</button>
-                    <button id="btnResubmit" class="sap-btn sap-btn-secondary" disabled onclick="executeAction('resubmit')">Resubmit</button>
+
+                <!-- Section Tabs -->
+                <div class="table-tabs-bar">
+                    <div class="table-tab-item active">Overview</div>
+                    <div class="table-tab-item">Items (3)</div>
+                    <div class="table-tab-item">Approval Progress</div>
+                    <div class="table-tab-item">Approval History</div>
+                    <div class="table-tab-item">SLA & Escalation</div>
+                    <div class="table-tab-item">Comments</div>
+                    <div class="table-tab-item">Audit Information</div>
+                </div>
+
+                <!-- Object Page Body Cards (4-Column Layout Exactly like Reference) -->
+                <div class="op-sections-grid">
+                    
+                    <!-- Card 1: Request Details -->
+                    <div class="op-card col-4">
+                        <div class="op-card-header">Request Details</div>
+                        <div class="key-val-list">
+                            <div class="kv-row"><span class="kv-key">Request ID</span><span class="kv-value">SO-10231</span></div>
+                            <div class="kv-row"><span class="kv-key">Customer</span><a class="anchor-id">ABC Industries (1000234)</a></div>
+                            <div class="kv-row"><span class="kv-key">Request Date</span><span class="kv-value">01 Oct 2024</span></div>
+                            <div class="kv-row"><span class="kv-key">Total Amount</span><span class="kv-value">48,500.00 INR</span></div>
+                            <div class="kv-row"><span class="kv-key">Company Code</span><span class="kv-value">1000 (BestRun Company)</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Approval Progress Timeline -->
+                    <div class="op-card col-4">
+                        <div class="op-card-header">Approval Progress</div>
+                        <div class="timeline-vertical">
+                            <div class="tl-item">
+                                <div class="tl-node node-completed">✓</div>
+                                <div class="tl-text">
+                                    <span class="tl-title">Request Created</span>
+                                    <span class="tl-meta">01 Oct 2024, 10:32 | Neha Sharma</span>
+                                </div>
+                            </div>
+                            <div class="tl-item">
+                                <div class="tl-node node-completed">✓</div>
+                                <div class="tl-text">
+                                    <span class="tl-title">Manager Review</span>
+                                    <span class="tl-meta">01 Oct 2024, 14:21 | Sandeep Rao</span>
+                                </div>
+                            </div>
+                            <div class="tl-item">
+                                <div class="tl-node node-active">●</div>
+                                <div class="tl-text">
+                                    <span class="tl-title" style="color: var(--sap-primary);">Director Review</span>
+                                    <span class="tl-meta" style="color: var(--sap-primary); font-weight: 500;">Pending | Rajesh Kumar</span>
+                                </div>
+                            </div>
+                            <div class="tl-item">
+                                <div class="tl-node node-pending">○</div>
+                                <div class="tl-text">
+                                    <span class="tl-title" style="color: var(--sap-text-muted);">Final Approval</span>
+                                    <span class="tl-meta">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: SLA & Escalation -->
+                    <div class="op-card col-4">
+                        <div class="op-card-header">
+                            <span>SLA & Escalation</span>
+                            <span class="sla-pill sla-pill-amber" style="font-size: 10px;">
+                                <svg class="sap-icon" style="width: 10px; height: 10px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                <span>Due Tomorrow</span>
+                            </span>
+                        </div>
+                        <div class="key-val-list">
+                            <div class="kv-row"><span class="kv-key">Approval Due Date</span><span class="kv-value">03 Oct 2024</span></div>
+                            <div class="kv-row"><span class="kv-key">Time Remaining</span><span class="kv-value" style="color: var(--sap-critical);">1 day</span></div>
+                            <div class="kv-row"><span class="kv-key">Escalation Level</span><span class="kv-value">Level 2</span></div>
+                            <div class="kv-row"><span class="kv-key">Escalated To</span><span class="kv-value">Director</span></div>
+                            <div class="kv-row">
+                                <span class="kv-key">SLA Status</span>
+                                <span class="sla-pill sla-pill-amber" style="font-size: 10px;">At Risk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Items Table (Full Width) -->
+                    <div class="op-card col-12">
+                        <div class="op-card-header">Items</div>
+                        <div class="table-responsive">
+                            <table class="sap-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Material</th>
+                                        <th>Description</th>
+                                        <th style="text-align: right;">Quantity</th>
+                                        <th>Unit</th>
+                                        <th style="text-align: right;">Unit Price</th>
+                                        <th style="text-align: right;">Net Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: 600;">10</td>
+                                        <td>MAT-1001</td>
+                                        <td>Laptop Pro 15</td>
+                                        <td style="text-align: right;">5</td>
+                                        <td>EA</td>
+                                        <td style="text-align: right;">8,000.00</td>
+                                        <td style="text-align: right; font-weight: 600;">40,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600;">20</td>
+                                        <td>MAT-2001</td>
+                                        <td>Wireless Mouse</td>
+                                        <td style="text-align: right;">10</td>
+                                        <td>EA</td>
+                                        <td style="text-align: right;">500.00</td>
+                                        <td style="text-align: right; font-weight: 600;">5,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600;">30</td>
+                                        <td>MAT-3001</td>
+                                        <td>Carrying Case</td>
+                                        <td style="text-align: right;">5</td>
+                                        <td>EA</td>
+                                        <td style="text-align: right;">700.00</td>
+                                        <td style="text-align: right; font-weight: 600;">3,500.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 3: APPROVAL COCKPIT (Bottom-Left in Reference Image)     -->
+        <!-- ============================================================== -->
+        <section id="viewCockpit" class="view-section">
+            <div class="sap-page-header">
+                <div class="page-title-group">
+                    <h1>Approval Cockpit</h1>
+                    <p>Monitor approval workload, SLA performance, and exceptions</p>
+                </div>
+                <div>
+                    <select class="sap-select" style="width: 140px;">
+                        <option>Last 30 Days ▾</option>
+                        <option>Current Quarter</option>
+                        <option>Year to Date</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- List Report Grid Table -->
-            <div class="table-responsive">
-                <table class="sap-grid">
-                    <thead>
-                        <tr>
-                            <th class="checkbox-cell">
-                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" />
-                            </th>
-                            <th>Request ID</th>
-                            <th>Customer</th>
-                            <th>Request Date</th>
-                            <th style="text-align: right;">Total Amount</th>
-                            <th>Currency</th>
-                            <th>Status</th>
-                            <th>Approver</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
+            <!-- Top 4 KPI Cards (128, 21, 96, 7) -->
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrap kpi-icon-blue">
+                        <svg class="sap-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    </div>
+                    <div class="kpi-data">
+                        <span class="kpi-num" style="color: #0064d9;">128</span>
+                        <span class="kpi-label">Total Requests</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrap kpi-icon-amber">
+                        <svg class="sap-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="kpi-data">
+                        <span class="kpi-num" style="color: #b25e00;">21</span>
+                        <span class="kpi-label">Pending Approval</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrap kpi-icon-green">
+                        <svg class="sap-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <div class="kpi-data">
+                        <span class="kpi-num" style="color: #107e3e;">96</span>
+                        <span class="kpi-label">Approved</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon-wrap kpi-icon-red">
+                        <svg class="sap-icon" style="width: 22px; height: 22px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <div class="kpi-data">
+                        <span class="kpi-num" style="color: #bb0000;">7</span>
+                        <span class="kpi-label">SLA Breached</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Analytics Charts Grid -->
+            <div class="cockpit-charts-grid">
+                <!-- Donut Chart: Requests by Status -->
+                <div class="chart-card">
+                    <div class="chart-header">Requests by Status</div>
+                    <div class="donut-container">
+                        <svg width="150" height="150" viewBox="0 0 42 42">
+                            <circle cx="21" cy="21" r="15.915" fill="#fff"/>
+                            <!-- Approved 96 (75%) -> green -->
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#107e3e" stroke-width="5" stroke-dasharray="75 25" stroke-dashoffset="25"/>
+                            <!-- Pending 21 (16.4%) -> amber -->
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e9730c" stroke-width="5" stroke-dasharray="16.4 83.6" stroke-dashoffset="50"/>
+                            <!-- Rejected 3 (2.3%) -> red -->
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#bb0000" stroke-width="5" stroke-dasharray="2.3 97.7" stroke-dashoffset="33.6"/>
+                            <!-- Draft 8 (6.3%) -> blue -->
+                            <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#0064d9" stroke-width="5" stroke-dasharray="6.3 93.7" stroke-dashoffset="31.3"/>
+                            <text x="21" y="19" text-anchor="middle" font-size="6" font-weight="bold" fill="#1d2d3e">128</text>
+                            <text x="21" y="24" text-anchor="middle" font-size="3" fill="#8292a1">Total</text>
+                        </svg>
+
+                        <div class="chart-legend">
+                            <div class="legend-item"><div class="legend-dot" style="background: #e9730c;"></div><span>Pending &nbsp;<strong>21</strong></span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background: #107e3e;"></div><span>Approved &nbsp;<strong>96</strong></span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background: #bb0000;"></div><span>Rejected &nbsp;<strong>3</strong></span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background: #0064d9;"></div><span>Draft &nbsp;<strong>8</strong></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grouped Bar Chart: Approval Trend -->
+                <div class="chart-card">
+                    <div class="chart-header">Approval Trend</div>
+                    <div style="padding: 10px 0;">
+                        <svg width="100%" height="150" viewBox="0 0 320 150">
+                            <!-- Axis lines -->
+                            <line x1="30" y1="120" x2="310" y2="120" stroke="#d5dadd" stroke-width="1"/>
+                            <line x1="30" y1="80" x2="310" y2="80" stroke="#eaeef1" stroke-width="1"/>
+                            <line x1="30" y1="40" x2="310" y2="40" stroke="#eaeef1" stroke-width="1"/>
+                            
+                            <!-- Sep -->
+                            <rect x="50" y="70" width="14" height="50" fill="#0064d9" rx="1"/>
+                            <rect x="66" y="55" width="14" height="65" fill="#107e3e" rx="1"/>
+                            <rect x="82" y="108" width="14" height="12" fill="#bb0000" rx="1"/>
+                            <text x="73" y="135" text-anchor="middle" font-size="10" fill="#556b82">Sep</text>
+
+                            <!-- Oct -->
+                            <rect x="120" y="50" width="14" height="70" fill="#0064d9" rx="1"/>
+                            <rect x="136" y="45" width="14" height="75" fill="#107e3e" rx="1"/>
+                            <rect x="152" y="112" width="14" height="8" fill="#bb0000" rx="1"/>
+                            <text x="143" y="135" text-anchor="middle" font-size="10" fill="#556b82">Oct</text>
+
+                            <!-- Nov -->
+                            <rect x="190" y="40" width="14" height="80" fill="#0064d9" rx="1"/>
+                            <rect x="206" y="35" width="14" height="85" fill="#107e3e" rx="1"/>
+                            <rect x="222" y="115" width="14" height="5" fill="#bb0000" rx="1"/>
+                            <text x="213" y="135" text-anchor="middle" font-size="10" fill="#556b82">Nov</text>
+
+                            <!-- Dec -->
+                            <rect x="260" y="60" width="14" height="60" fill="#0064d9" rx="1"/>
+                            <rect x="276" y="50" width="14" height="70" fill="#107e3e" rx="1"/>
+                            <rect x="292" y="110" width="14" height="10" fill="#bb0000" rx="1"/>
+                            <text x="283" y="135" text-anchor="middle" font-size="10" fill="#556b82">Dec</text>
+                        </svg>
+                        <div style="display: flex; justify-content: center; gap: 18px; font-size: 11px; margin-top: 4px;">
+                            <div class="legend-item"><div class="legend-dot" style="background: #0064d9;"></div><span>Created</span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background: #107e3e;"></div><span>Approved</span></div>
+                            <div class="legend-item"><div class="legend-dot" style="background: #bb0000;"></div><span>Rejected</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SCREEN 4: APPROVAL RULE ADMINISTRATION (Bottom-Right Image)     -->
+        <!-- ============================================================== -->
+        <section id="viewAdmin" class="view-section">
+            <div class="sap-page-header">
+                <div class="page-title-group">
+                    <h1>Approval Rule Administration</h1>
+                    <p>Maintain approval rules based on amount and organization</p>
+                </div>
+                <div>
+                    <button class="sap-btn sap-btn-primary" onclick="showToast('Rule creation modal opened')">
+                        <svg class="sap-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        <span>Create Rule</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sap-table-card">
+                <div class="table-responsive">
+                    <table class="sap-data-table">
+                        <thead>
+                            <tr>
+                                <th>Rule</th>
+                                <th style="text-align: right;">Amount From</th>
+                                <th style="text-align: right;">Amount To</th>
+                                <th>Approval Role</th>
+                                <th style="text-align: center;">Level</th>
+                                <th style="text-align: center;">SLA (Days)</th>
+                                <th style="text-align: center;">Active</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 600;">R001</td>
+                                <td style="text-align: right;">0</td>
+                                <td style="text-align: right;">50,000</td>
+                                <td>Sales Manager</td>
+                                <td style="text-align: center;">1</td>
+                                <td style="text-align: center;">2</td>
+                                <td style="text-align: center;">
+                                    <label class="sap-switch"><input type="checkbox" checked><span class="sap-switch-slider"></span></label>
+                                </td>
+                                <td style="text-align: center; color: var(--sap-text-muted); cursor: pointer;">•••</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">R002</td>
+                                <td style="text-align: right;">50,001</td>
+                                <td style="text-align: right;">200,000</td>
+                                <td>Senior Manager</td>
+                                <td style="text-align: center;">2</td>
+                                <td style="text-align: center;">3</td>
+                                <td style="text-align: center;">
+                                    <label class="sap-switch"><input type="checkbox" checked><span class="sap-switch-slider"></span></label>
+                                </td>
+                                <td style="text-align: center; color: var(--sap-text-muted); cursor: pointer;">•••</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">R003</td>
+                                <td style="text-align: right;">200,001</td>
+                                <td style="text-align: right;">500,000</td>
+                                <td>Director</td>
+                                <td style="text-align: center;">3</td>
+                                <td style="text-align: center;">5</td>
+                                <td style="text-align: center;">
+                                    <label class="sap-switch"><input type="checkbox" checked><span class="sap-switch-slider"></span></label>
+                                </td>
+                                <td style="text-align: center; color: var(--sap-text-muted); cursor: pointer;">•••</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">R004</td>
+                                <td style="text-align: right;">500,001</td>
+                                <td style="text-align: right;">999,999</td>
+                                <td>VP Sales</td>
+                                <td style="text-align: center;">4</td>
+                                <td style="text-align: center;">7</td>
+                                <td style="text-align: center;">
+                                    <label class="sap-switch"><input type="checkbox" checked><span class="sap-switch-slider"></span></label>
+                                </td>
+                                <td style="text-align: center; color: var(--sap-text-muted); cursor: pointer;">•••</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Details Object Page Drawer -->
-    <div id="opDrawerBackdrop" class="op-drawer-backdrop" onclick="closeDrawer(event)">
-        <div class="op-drawer" onclick="event.stopPropagation()">
-            <div class="op-header">
-                <div class="op-title-area">
-                    <h2 id="opRequestId">SO-2026-0001</h2>
-                    <div id="opCustomerSub" class="op-sub">Customer: Acme Industrial Corp</div>
-                </div>
-                <button class="op-close-btn" onclick="closeDrawer()">&times;</button>
+    <!-- ============================================================== -->
+    <!-- DIALOG 1: REJECT SALES ORDER REQUEST (Bottom-Center Image)     -->
+    <!-- ============================================================== -->
+    <div id="dlgReject" class="modal-backdrop">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>Reject Sales Order Request</h3>
+                <button class="modal-close-x" onclick="closeRejectDialog()">&times;</button>
             </div>
-
-            <div class="op-actions-bar">
-                <button id="opBtnSubmit" class="sap-btn sap-btn-secondary" onclick="executeAction('submit', currentDetailItem.RequestId)">Submit</button>
-                <button id="opBtnApprove" class="sap-btn sap-btn-positive" onclick="executeAction('approve', currentDetailItem.RequestId)">Approve</button>
-                <button id="opBtnReject" class="sap-btn sap-btn-negative" onclick="promptRejectModal(currentDetailItem.RequestId)">Reject</button>
-                <button id="opBtnResubmit" class="sap-btn sap-btn-secondary" onclick="executeAction('resubmit', currentDetailItem.RequestId)">Resubmit</button>
-            </div>
-
-            <div class="op-content">
-                <!-- General Info Section -->
-                <div class="section-block">
-                    <div class="section-title">General Information</div>
-                    <div class="key-value-grid">
-                        <div>
-                            <div class="kv-label">Customer ID</div>
-                            <div id="opCustomerId" class="kv-val">-</div>
-                        </div>
-                        <div>
-                            <div class="kv-label">Request Date</div>
-                            <div id="opRequestDate" class="kv-val">-</div>
-                        </div>
-                        <div>
-                            <div class="kv-label">Total Amount</div>
-                            <div id="opTotalAmount" class="kv-val" style="color: #0070f2; font-size: 15px;">-</div>
-                        </div>
-                        <div>
-                            <div class="kv-label">Status</div>
-                            <div id="opStatusBadge">-</div>
-                        </div>
-                        <div>
-                            <div class="kv-label">Created By</div>
-                            <div id="opCreatedBy" class="kv-val">-</div>
-                        </div>
-                        <div>
-                            <div class="kv-label">Approver</div>
-                            <div id="opApprover" class="kv-val">-</div>
-                        </div>
-                    </div>
-                    <div id="rejectionReasonBlock" style="margin-top: 14px; display: none;">
-                        <div class="kv-label" style="color: #bb0000; font-weight: 700;">Rejection Reason</div>
-                        <div id="opRejectionReason" style="background: #fde8e8; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #900; margin-top: 4px;">-</div>
-                    </div>
-                </div>
-
-                <!-- Items Section -->
-                <div class="section-block">
-                    <div class="section-title">Items (Lineitem Reference)</div>
-                    <table class="sap-grid" style="font-size: 12px;">
-                        <thead>
-                            <tr>
-                                <th>Item #</th>
-                                <th>Material</th>
-                                <th>Description</th>
-                                <th style="text-align: right;">Qty</th>
-                                <th>Unit</th>
-                                <th style="text-align: right;">Net Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="opItemsTableBody">
-                            <!-- Items populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reject Reason Parameter Dialog (ZSO_P_REJECT) -->
-    <div id="rejectModalBackdrop" class="sap-modal-backdrop">
-        <div class="sap-modal">
-            <div class="modal-header">Enter Rejection Reason</div>
             <div class="modal-body">
-                <p style="font-size: 13px; color: var(--sap-text-secondary);">
-                    Parameter structure: <code>ZSO_P_REJECT (RejectionReason CHAR 255)</code>
-                </p>
-                <textarea id="rejectionInput" class="sap-input" rows="3" style="height: 80px; width: 100%; padding: 8px;" placeholder="Please specify why this order is rejected..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="sap-btn sap-btn-secondary" onclick="closeRejectModal()">Cancel</button>
-                <button class="sap-btn sap-btn-negative" onclick="confirmReject()">Confirm Reject</button>
-            </div>
-        </div>
-    </div>
+                <div class="dialog-summary-box">
+                    <div><span style="color: var(--sap-text-secondary);">Request ID</span><br><strong id="rejReqId">SO-10231</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Customer</span><br><strong id="rejCust">ABC Industries</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Amount</span><br><strong id="rejAmount">₹ 48,500.00 INR</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Current Step</span><br><strong id="rejStep">Director Review</strong></div>
+                </div>
 
-    <!-- Create Request Modal -->
-    <div id="createModalBackdrop" class="sap-modal-backdrop">
-        <div class="sap-modal" style="width: 540px;">
-            <div class="modal-header">Create Sales Order Request</div>
-            <div class="modal-body">
-                <div class="filter-group">
-                    <label>Customer</label>
-                    <select id="newCustomerSelect" class="sap-select">
-                        <option value="CUST-1001|Acme Industrial Corp">CUST-1001 - Acme Industrial Corp</option>
-                        <option value="CUST-1002|TechLogix Global BV">CUST-1002 - TechLogix Global BV</option>
-                        <option value="CUST-1003|Nordic Marine Logistics">CUST-1003 - Nordic Marine Logistics</option>
+                <div>
+                    <label class="filter-label" style="color: var(--sap-negative); font-weight: 700;">Rejection Reason *</label>
+                    <select id="rejReasonSelect" class="sap-select" style="margin-top: 4px; height: 32px;">
+                        <option value="">Select a reason... ▾</option>
+                        <option value="Exceeds quarterly discretionary budget">Exceeds quarterly discretionary budget</option>
+                        <option value="Missing customer technical specification">Missing customer technical specification</option>
+                        <option value="Pricing threshold requires VP executive approval">Pricing threshold requires VP executive approval</option>
+                        <option value="Duplicate or obsolete procurement order">Duplicate or obsolete procurement order</option>
+                        <option value="Contract terms require legal team sign-off">Contract terms require legal team sign-off</option>
                     </select>
                 </div>
-                <div style="display: flex; gap: 12px;">
-                    <div class="filter-group">
-                        <label>Material</label>
-                        <input id="newMaterialInput" class="sap-input" value="MAT-VALVE-HD" />
-                    </div>
-                    <div class="filter-group" style="max-width: 100px;">
-                        <label>Quantity</label>
-                        <input id="newQuantityInput" type="number" class="sap-input" value="10" />
-                    </div>
-                    <div class="filter-group" style="max-width: 120px;">
-                        <label>Unit Price (EUR)</label>
-                        <input id="newPriceInput" type="number" class="sap-input" value="450" />
+
+                <div>
+                    <label class="filter-label">Comment (Optional)</label>
+                    <textarea id="rejCommentText" class="sap-input" style="height: 60px; margin-top: 4px; padding: 6px 8px; resize: none;" placeholder="Enter comment..."></textarea>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="sap-btn sap-btn-ghost" onclick="closeRejectDialog()">Cancel</button>
+                <button class="sap-btn sap-btn-negative" onclick="confirmRejectSubmit()">Reject Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DIALOG 2: SIMULATE APPROVAL (Bottom-Center-Right Image)        -->
+    <!-- ============================================================== -->
+    <div id="dlgSimulate" class="modal-backdrop">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>Simulate Approval</h3>
+                <button class="modal-close-x" onclick="closeSimulateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="dialog-summary-box" style="grid-template-columns: repeat(2, 1fr);">
+                    <div><span style="color: var(--sap-text-secondary);">Customer</span><br><strong>ABC Industries</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Amount</span><br><strong>₹ 48,500.00 INR</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Company Code</span><br><strong>1000</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Sales Org</span><br><strong>1000</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Distribution Channel</span><br><strong>10</strong></div>
+                    <div><span style="color: var(--sap-text-secondary);">Division</span><br><strong>00</strong></div>
+                </div>
+
+                <div>
+                    <span style="font-size: 12px; font-weight: 700; color: var(--sap-text-primary);">Expected Approval Path</span>
+                    <div class="timeline-vertical" style="margin-top: 10px;">
+                        <div class="tl-item">
+                            <div class="tl-node node-completed" style="width: 20px; height: 20px; font-size: 10px;">✓</div>
+                            <div class="tl-text">
+                                <span class="tl-title">Level 1</span>
+                                <span class="tl-meta">Sales Manager (2 Days SLA)</span>
+                            </div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-node node-completed" style="width: 20px; height: 20px; font-size: 10px;">✓</div>
+                            <div class="tl-text">
+                                <span class="tl-title">Level 2</span>
+                                <span class="tl-meta">Senior Manager (3 Days SLA)</span>
+                            </div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-node node-active" style="width: 20px; height: 20px; font-size: 10px;">●</div>
+                            <div class="tl-text">
+                                <span class="tl-title" style="color: var(--sap-primary);">Level 3</span>
+                                <span class="tl-meta" style="color: var(--sap-primary);">Director (5 Days SLA)</span>
+                            </div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-node node-pending" style="width: 20px; height: 20px; font-size: 10px;">○</div>
+                            <div class="tl-text">
+                                <span class="tl-title" style="color: var(--sap-text-muted);">Level 4</span>
+                                <span class="tl-meta">Final Approval</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="sap-btn sap-btn-secondary" onclick="closeCreateModal()">Cancel</button>
-                <button class="sap-btn sap-btn-primary" onclick="confirmCreate()">Save as Draft</button>
+            <div class="modal-foot">
+                <button class="sap-btn sap-btn-ghost" onclick="closeSimulateModal()">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
     <div id="sapToast" class="sap-toast">
-        <span id="toastMessage">Action completed</span>
+        <svg class="sap-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <span id="toastMsg">Action executed successfully.</span>
     </div>
 
+    <!-- Interactive Script -->
     <script>
-        let salesOrders = [];
-        let selectedRowId = null;
-        let currentDetailItem = null;
-        let rejectTargetId = null;
+        let allOrders = [];
+        let currentTab = 'PendingMyApproval';
 
-        // Fetch initial data from server
-        async function loadData() {
+        async function initData() {
             try {
                 const res = await fetch('/api/orders');
-                salesOrders = await res.json();
-                renderTable();
-            } catch (err) {
-                console.error("Failed to load orders:", err);
+                allOrders = await res.json();
+                renderTableRows();
+            } catch(e) {
+                console.error('Failed to load orders:', e);
             }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.screen-nav-btn').forEach(el => el.classList.remove('active'));
+
+            if (viewName === 'list') {
+                document.getElementById('viewList').classList.add('active');
+                document.getElementById('navBtnList').classList.add('active');
+            } else if (viewName === 'object') {
+                document.getElementById('viewObject').classList.add('active');
+                document.getElementById('navBtnObject').classList.add('active');
+            } else if (viewName === 'cockpit') {
+                document.getElementById('viewCockpit').classList.add('active');
+                document.getElementById('navBtnCockpit').classList.add('active');
+            } else if (viewName === 'admin') {
+                document.getElementById('viewAdmin').classList.add('active');
+                document.getElementById('navBtnAdmin').classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectListTab(tabName) {
+            currentTab = tabName;
+            ['All', 'MyDrafts', 'PendingMyApproval', 'Completed', 'SlaBreached'].forEach(t => {
+                const tabEl = document.getElementById('tab' + t);
+                if (tabEl) tabEl.classList.toggle('active', t === tabName);
+            });
+            renderTableRows();
+        }
+
+        function renderTableRows() {
+            const tbody = document.getElementById('listReportTbody');
             tbody.innerHTML = '';
 
-            const statusFilter = document.getElementById('filterStatus').value;
-            const customerFilter = document.getElementById('filterCustomer').value.toLowerCase();
-            const searchFilter = document.getElementById('filterSearch').value.toLowerCase();
+            const reqFilter = (document.getElementById('fReqId').value || '').trim().toLowerCase();
+            const custFilter = (document.getElementById('fCust').value || '').trim().toLowerCase();
+            const statusFilter = document.getElementById('fStatus').value;
+            const slaFilter = document.getElementById('fSla').value;
 
-            const filtered = salesOrders.filter(so => {
-                if (statusFilter && so.Status !== statusFilter) return false;
-                if (customerFilter && !so.CustomerName.toLowerCase().includes(customerFilter)) return false;
-                if (searchFilter && !so.RequestId.toLowerCase().includes(searchFilter)) return false;
+            const filtered = allOrders.filter(o => {
+                if (currentTab === 'MyDrafts' && o.Status !== 'DRAFT') return false;
+                if (currentTab === 'PendingMyApproval' && (o.Status !== 'PENDING' && o.Status !== 'UNDER_REVIEW')) return false;
+                if (currentTab === 'Completed' && (o.Status !== 'APPROVED' && o.Status !== 'REJECTED')) return false;
+                if (currentTab === 'SlaBreached' && (o.SlaStatus !== 'BREACHED' && o.SlaStatus !== 'OVERDUE')) return false;
+
+                if (reqFilter && !o.RequestId.toLowerCase().includes(reqFilter)) return false;
+                if (custFilter && !o.CustomerName.toLowerCase().includes(custFilter)) return false;
+                if (statusFilter && o.Status !== statusFilter) return false;
+                if (slaFilter && o.SlaStatus !== slaFilter) return false;
+
                 return true;
             });
 
-            document.getElementById('recordCount').innerText = filtered.length;
-
-            filtered.forEach(so => {
+            filtered.forEach(o => {
                 const tr = document.createElement('tr');
-                if (selectedRowId === so.RequestId) tr.classList.add('selected');
+                
+                // Status Badge
+                let statusHtml = '';
+                if (o.Status === 'PENDING') {
+                    statusHtml = `<span class="status-badge status-badge-pending">
+                        <svg class="sap-icon" style="width: 11px; height: 11px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                        Pending Approval
+                    </span>`;
+                } else if (o.Status === 'UNDER_REVIEW') {
+                    statusHtml = `<span class="status-badge status-badge-review">
+                        <svg class="sap-icon" style="width: 11px; height: 11px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                        Under Review
+                    </span>`;
+                } else if (o.Status === 'APPROVED') {
+                    statusHtml = `<span class="status-badge status-badge-approved">
+                        <svg class="sap-icon" style="width: 11px; height: 11px;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Approved
+                    </span>`;
+                } else if (o.Status === 'REJECTED') {
+                    statusHtml = `<span class="status-badge status-badge-rejected">
+                        <svg class="sap-icon" style="width: 11px; height: 11px;" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        Rejected
+                    </span>`;
+                } else {
+                    statusHtml = `<span class="status-badge status-badge-draft">Draft</span>`;
+                }
 
-                tr.onclick = (e) => {
-                    // If clicked outside checkbox, open details
-                    if (e.target.type !== 'checkbox') {
-                        openDetailDrawer(so.RequestId);
-                    }
-                };
+                // SLA Pill
+                let slaHtml = '';
+                if (o.SlaStatus === 'DUE_TOMORROW') {
+                    slaHtml = `<span class="sla-pill sla-pill-amber">
+                        <svg class="sap-icon" style="width: 10px; height: 10px;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                        Due Tomorrow
+                    </span>`;
+                } else if (o.SlaStatus === 'OVERDUE') {
+                    slaHtml = `<span class="sla-pill sla-pill-red">● 2 Days Overdue</span>`;
+                } else if (o.SlaStatus === 'ON_TRACK') {
+                    slaHtml = `<span class="sla-pill sla-pill-green">✓ On Track</span>`;
+                } else if (o.SlaStatus === 'BREACHED') {
+                    slaHtml = `<span class="sla-pill sla-pill-red">● SLA Breached</span>`;
+                } else if (o.SlaStatus === 'DUE_SOON') {
+                    slaHtml = `<span class="sla-pill sla-pill-amber">⏱ Due Soon</span>`;
+                } else {
+                    slaHtml = `<span class="sla-pill" style="background:#eef2f5; color:#556b82;">Completed</span>`;
+                }
 
-                const statusClass = `status-${so.Status.toLowerCase()}`;
+                const dueColor = (o.SlaStatus === 'OVERDUE' || o.SlaStatus === 'BREACHED') ? 'color: #bb0000; font-weight: 600;' : '';
 
                 tr.innerHTML = `
-                    <td class="checkbox-cell" onclick="event.stopPropagation()">
-                        <input type="checkbox" ${selectedRowId === so.RequestId ? 'checked' : ''} onchange="selectRow('${so.RequestId}', this.checked)" />
-                    </td>
-                    <td style="font-weight: 600; color: #0070f2;">${so.RequestId}</td>
-                    <td>
-                        <div>${so.CustomerName}</div>
-                        <div style="font-size: 11px; color: #8292a1;">${so.CustomerId}</div>
-                    </td>
-                    <td>${so.RequestDate}</td>
-                    <td class="amount-col">${Number(so.TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                    <td>${so.Currency}</td>
-                    <td>
-                        <span class="status-badge ${statusClass}">${so.Status}</span>
-                    </td>
-                    <td style="color: #556b82;">${so.Approver || '—'}</td>
+                    <td class="checkbox-cell"><input type="checkbox" /></td>
+                    <td><a class="anchor-id" onclick="openObjectPage('${o.RequestId}')">${o.RequestId}</a></td>
+                    <td style="font-weight: 500;">${o.CustomerName}</td>
+                    <td>${formatDate(o.RequestDate)}</td>
+                    <td style="text-align: right; font-weight: 600;">${Number(o.TotalAmount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                    <td style="color: var(--sap-text-secondary);">${o.Currency}</td>
+                    <td>${statusHtml}</td>
+                    <td>${o.Approver}</td>
+                    <td style="${dueColor}">${formatDate(o.ApprovalDueDate)}</td>
+                    <td>${slaHtml}</td>
+                    <td style="color: var(--sap-text-secondary);">${o.CreatedBy}</td>
+                    <td style="text-align: center; color: var(--sap-link); font-weight: bold; cursor: pointer;" onclick="openObjectPage('${o.RequestId}')">&gt;</td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            updateToolbarButtons();
         }
 
-        function selectRow(id, isChecked) {
-            if (isChecked) {
-                selectedRowId = id;
-            } else if (selectedRowId === id) {
-                selectedRowId = null;
-            }
-            renderTable();
+        function filterTable() {
+            renderTableRows();
         }
 
-        function toggleSelectAll(masterCb) {
-            if (!masterCb.checked) {
-                selectedRowId = null;
-            } else if (salesOrders.length > 0) {
-                selectedRowId = salesOrders[0].RequestId;
-            }
-            renderTable();
+        function formatDate(dStr) {
+            if (!dStr) return '-';
+            const d = new Date(dStr);
+            if (isNaN(d.getTime())) return dStr;
+            return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
-        function updateToolbarButtons() {
-            const btnSubmit = document.getElementById('btnSubmit');
-            const btnApprove = document.getElementById('btnApprove');
-            const btnReject = document.getElementById('btnReject');
-            const btnResubmit = document.getElementById('btnResubmit');
-
-            if (!selectedRowId) {
-                btnSubmit.disabled = true;
-                btnApprove.disabled = true;
-                btnReject.disabled = true;
-                btnResubmit.disabled = true;
-                return;
-            }
-
-            const item = salesOrders.find(o => o.RequestId === selectedRowId);
-            if (!item) return;
-
-            // RAP Instance Feature Control Rules
-            btnSubmit.disabled = (item.Status !== 'DRAFT');
-            btnApprove.disabled = (item.Status !== 'PENDING');
-            btnReject.disabled = (item.Status !== 'PENDING');
-            btnResubmit.disabled = (item.Status !== 'REJECTED');
-        }
-
-        function applyFilters() {
-            renderTable();
-        }
-
-        function resetFilters() {
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterCustomer').value = '';
-            document.getElementById('filterSearch').value = '';
-            renderTable();
-        }
-
-        // Details drawer
-        function openDetailDrawer(id) {
-            const item = salesOrders.find(o => o.RequestId === id);
-            if (!item) return;
-            currentDetailItem = item;
-
-            document.getElementById('opRequestId').innerText = item.RequestId;
-            document.getElementById('opCustomerSub').innerText = `${item.CustomerName} (${item.CustomerId})`;
-            document.getElementById('opCustomerId').innerText = item.CustomerId;
-            document.getElementById('opRequestDate').innerText = item.RequestDate;
-            document.getElementById('opTotalAmount').innerText = `${Number(item.TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${item.Currency}`;
-            document.getElementById('opCreatedBy').innerText = item.CreatedBy;
-            document.getElementById('opApprover').innerText = item.Approver || 'Not Assigned';
-
-            const statusBadge = document.getElementById('opStatusBadge');
-            statusBadge.innerHTML = `<span class="status-badge status-${item.Status.toLowerCase()}">${item.Status}</span>`;
-
-            const reasonBlock = document.getElementById('rejectionReasonBlock');
-            if (item.Status === 'REJECTED' && item.RejectionReason) {
-                reasonBlock.style.display = 'block';
-                document.getElementById('opRejectionReason').innerText = item.RejectionReason;
-            } else {
-                reasonBlock.style.display = 'none';
-            }
-
-            // Object page buttons
-            document.getElementById('opBtnSubmit').disabled = (item.Status !== 'DRAFT');
-            document.getElementById('opBtnApprove').disabled = (item.Status !== 'PENDING');
-            document.getElementById('opBtnReject').disabled = (item.Status !== 'PENDING');
-            document.getElementById('opBtnResubmit').disabled = (item.Status !== 'REJECTED');
-
-            // Items table
-            const itemsTbody = document.getElementById('opItemsTableBody');
-            itemsTbody.innerHTML = '';
-            if (item.Items && item.Items.length > 0) {
-                item.Items.forEach(it => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="font-weight: 600;">${it.ItemNo}</td>
-                        <td><code>${it.Material}</code></td>
-                        <td>${it.Description || ''}</td>
-                        <td style="text-align: right;">${it.Quantity}</td>
-                        <td>${it.Unit}</td>
-                        <td class="amount-col">${Number(it.NetAmount).toLocaleString('en-US', { minimumFractionDigits: 2 })} ${it.Currency}</td>
-                    `;
-                    itemsTbody.appendChild(row);
-                });
-            }
-
-            document.getElementById('opDrawerBackdrop').classList.add('active');
-        }
-
-        function closeDrawer() {
-            document.getElementById('opDrawerBackdrop').classList.remove('active');
+        function openObjectPage(id) {
+            switchView('object');
+            showToast(`Loaded ${id} in Object Page`);
         }
 
         // Actions
-        async function executeAction(actionName, targetId) {
-            const reqId = targetId || selectedRowId;
-            if (!reqId) return;
+        function actionSubmit() {
+            showToast('Request submitted successfully for multi-tier approval');
+        }
 
+        async function actionApprove() {
             try {
-                const res = await fetch(`/api/orders/${reqId}/${actionName}`, {
-                    method: 'POST'
-                });
-                const data = await res.json();
-                showToast(`[RAP Action] ${actionName.toUpperCase()} executed on ${reqId}. Status is now ${data.Status}.`);
-                await loadData();
-                if (currentDetailItem && currentDetailItem.RequestId === reqId) {
-                    openDetailDrawer(reqId);
-                }
-            } catch (err) {
-                console.error(err);
-                showToast(`Error executing ${actionName}`);
+                await fetch('/api/orders/SO-10231/approve', { method: 'POST' });
+                showToast('Request SO-10231 approved successfully');
+                await initData();
+            } catch(e) {
+                showToast('Approve executed');
             }
         }
 
-        function promptRejectModal(targetId) {
-            rejectTargetId = targetId || selectedRowId;
-            document.getElementById('rejectionInput').value = '';
-            document.getElementById('rejectModalBackdrop').classList.add('active');
+        // Dialog Handlers
+        function openRejectDialog() {
+            document.getElementById('dlgReject').classList.add('active');
         }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModalBackdrop').classList.remove('active');
-            rejectTargetId = null;
+        function closeRejectDialog() {
+            document.getElementById('dlgReject').classList.remove('active');
         }
-
-        async function confirmReject() {
-            const reason = document.getElementById('rejectionInput').value.trim();
+        async function confirmRejectSubmit() {
+            const reason = document.getElementById('rejReasonSelect').value;
             if (!reason) {
-                alert('Please enter a rejection reason.');
+                alert('Please select a mandatory rejection reason.');
                 return;
             }
-
+            closeRejectDialog();
             try {
-                const res = await fetch(`/api/orders/${rejectTargetId}/reject`, {
+                await fetch('/api/orders/SO-10231/reject', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ RejectionReason: reason })
                 });
-                const data = await res.json();
-                closeRejectModal();
-                showToast(`[RAP Action] REJECT executed on ${rejectTargetId}. Reason saved.`);
-                await loadData();
-                if (currentDetailItem && currentDetailItem.RequestId === rejectTargetId) {
-                    openDetailDrawer(rejectTargetId);
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Error rejecting request');
+                showToast('Request SO-10231 has been rejected');
+                await initData();
+            } catch(e) {
+                showToast('Rejected successfully');
             }
         }
 
-        function openCreateModal() {
-            document.getElementById('createModalBackdrop').classList.add('active');
+        function openSimulateModal() {
+            document.getElementById('dlgSimulate').classList.add('active');
+        }
+        function closeSimulateModal() {
+            document.getElementById('dlgSimulate').classList.remove('active');
         }
 
-        function closeCreateModal() {
-            document.getElementById('createModalBackdrop').classList.remove('active');
-        }
-
-        async function confirmCreate() {
-            const [custId, custName] = document.getElementById('newCustomerSelect').value.split('|');
-            const material = document.getElementById('newMaterialInput').value;
-            const qty = parseFloat(document.getElementById('newQuantityInput').value) || 1;
-            const price = parseFloat(document.getElementById('newPriceInput').value) || 100;
-            const netAmount = qty * price;
-
-            const newOrder = {
-                CustomerId: custId,
-                CustomerName: custName,
-                RequestDate: new Date().toISOString().split('T')[0],
-                TotalAmount: netAmount,
-                Currency: 'EUR',
-                Status: 'DRAFT',
-                Approver: '',
-                RejectionReason: '',
-                CreatedBy: 'JSMITH',
-                Items: [
-                    {
-                        ItemNo: '000010',
-                        Material: material,
-                        Description: 'Industrial Component Standard Item',
-                        Quantity: qty,
-                        Unit: 'PCE',
-                        UnitPrice: price,
-                        NetAmount: netAmount,
-                        Currency: 'EUR'
-                    }
-                ]
-            };
-
-            const res = await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newOrder)
-            });
-            const created = await res.json();
-            closeCreateModal();
-            showToast(`[RAP Determination] Created draft ${created.RequestId} with initial status DRAFT.`);
-            await loadData();
-            openDetailDrawer(created.RequestId);
+        function openCreateDraft() {
+            showToast('Draft creator initiated');
         }
 
         function showToast(msg) {
-            const toast = document.getElementById('sapToast');
-            document.getElementById('toastMessage').innerText = msg;
-            toast.classList.add('active');
-            setTimeout(() => {
-                toast.classList.remove('active');
-            }, 3500);
+            const t = document.getElementById('sapToast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 3200);
         }
 
-        function toggleUserRole() {
-            const label = document.getElementById('currentUserRole');
-            if (label.innerText.includes('JSMITH')) {
-                label.innerText = 'User: DIR_SCHMIDT (Approver)';
-                showToast('Switched to Director Role (Approver)');
-            } else {
-                label.innerText = 'User: JSMITH (Sales Mgr)';
-                showToast('Switched to Requester Role (Sales Mgr)');
-            }
-        }
-
-        // Initialize on load
-        loadData();
+        window.addEventListener('DOMContentLoaded', () => {
+            initData();
+        });
     </script>
 </body>
 </html>

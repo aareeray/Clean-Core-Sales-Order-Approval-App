@@ -1,0 +1,45 @@
+@EndUserText.label: 'Sales Order Approval History / Audit Trail'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_APPR_HIST {
+
+  @AbapCatalog.foreignKey.screenCheck: false
+  key mandt         : mandt not null;
+
+  @EndUserText.label: 'History Record UUID'
+  key history_id    : sysuuid_x16 not null;
+
+  @EndUserText.label: 'Parent Request UUID'
+  request_id        : sysuuid_x16 not null;
+
+  @EndUserText.label: 'Sequential Step Number'
+  step_no           : abap.int4 not null;
+
+  @EndUserText.label: 'Lifecycle Action'
+  action            : abap.char(20);
+
+  @EndUserText.label: 'Action Performed By'
+  actor             : abap.char(12);
+
+  @EndUserText.label: 'Actor Role'
+  actor_role        : abap.char(20);
+
+  @EndUserText.label: 'Action Timestamp'
+  action_timestamp  : utclong;
+
+  @EndUserText.label: 'Approval / Rejection Comment'
+  comment_text      : abap.char(255);
+
+  @EndUserText.label: 'Previous Status'
+  previous_status   : ZSO_E_STATUS;
+
+  @EndUserText.label: 'New Status'
+  new_status        : ZSO_E_STATUS;
+
+  @EndUserText.label: 'Workflow Task ID'
+  workflow_task_id  : abap.char(40);
+
+}

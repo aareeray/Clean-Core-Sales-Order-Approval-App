@@ -143,6 +143,30 @@
                     "enableFullScreen": true
                   }
                 }
+              },
+              "views": {
+                "paths": [
+                  {
+                    "key": "All",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#All"
+                  },
+                  {
+                    "key": "MyDrafts",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#MyDrafts"
+                  },
+                  {
+                    "key": "PendingMyApproval",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#PendingMyApproval"
+                  },
+                  {
+                    "key": "Completed",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#Completed"
+                  },
+                  {
+                    "key": "SlaBreached",
+                    "annotationPath": "com.sap.vocabularies.UI.v1.SelectionVariant#SlaBreached"
+                  }
+                ]
               }
             }
           }

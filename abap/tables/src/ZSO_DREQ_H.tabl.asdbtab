@@ -22,6 +22,11 @@ define table ZSO_DREQ_H {
   status                 : ZSO_E_STATUS;
   approver               : abap.char(12);
   rejection_reason       : abap.char(255);
+  approval_due_date      : abap.dats;
+  sla_status             : abap.char(12);
+  escalation_level       : abap.numc(2);
+  escalated_to           : abap.char(12);
+  escalated_at           : utclong;
   @Semantics.user.createdBy: true
   created_by             : syuname;
   @Semantics.systemDateTime.createdAt: true

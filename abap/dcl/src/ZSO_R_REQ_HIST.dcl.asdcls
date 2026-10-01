@@ -1,0 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////
+// DCL Access Control: ZSO_R_REQ_HIST (Approval History)
+//
+// Access control is inherited from the parent SalesOrderRequest entity.
+// A user may only view history records for requests they are authorized
+// to view via ZSO_R_REQ_H.
+///////////////////////////////////////////////////////////////////////////////
+
+@MappingRole: true
+define role ZSO_R_REQ_HIST_INHERITED {
+
+  grant select on ZSO_R_REQ_HIST
+    where
+      inheriting conditions from entity ZSO_R_REQ_H
+        associating _Header;
+
+}

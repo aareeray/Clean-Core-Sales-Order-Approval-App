@@ -36,7 +36,6 @@ define behavior for ZSO_R_REQ_H alias SalesOrderRequest
 
   ///
   /// Custom Business Actions
-  /// (features : instance) = enable/disable per instance via get_instance_features
   ///
   action ( features : instance ) submit
     result [1] $self;
@@ -50,6 +49,25 @@ define behavior for ZSO_R_REQ_H alias SalesOrderRequest
 
   action ( features : instance ) resubmit
     result [1] $self;
+
+  action ( features : instance ) escalate
+    result [1] $self;
+
+  ///
+  /// Approval Simulation Action (Phase 7 - Zero Persistence)
+  ///
+  static action simulateApproval
+    parameter ZSO_P_SIM_IN
+    result    [1] $self;
+
+  ///
+  /// RAP Business Events (Loose Coupling & Event-Driven Architecture)
+  ///
+  event RequestSubmitted   parameter ZSO_E_EVT_PAYLOAD;
+  event RequestApproved    parameter ZSO_E_EVT_PAYLOAD;
+  event RequestRejected    parameter ZSO_E_EVT_PAYLOAD;
+  event RequestResubmitted parameter ZSO_E_EVT_PAYLOAD;
+  event RequestEscalated   parameter ZSO_E_EVT_PAYLOAD;
 
   ///
   /// Validations — triggered on save sequence
@@ -83,7 +101,12 @@ define behavior for ZSO_R_REQ_H alias SalesOrderRequest
                       CreatedAt,
                       ChangedBy,
                       ChangedAt,
-                      Status;
+                      Status,
+                      SlaStatus,
+                      ApprovalDueDate,
+                      EscalationLevel,
+                      EscalatedTo,
+                      EscalatedAt;
 
   field ( mandatory ) CustomerId,
                       RequestDate;
@@ -91,7 +114,8 @@ define behavior for ZSO_R_REQ_H alias SalesOrderRequest
   ///
   /// Associations
   ///
-  association _Items { create; with draft; }
+  association _Items   { create; with draft; }
+  association _History { create; with draft; }
 
   ///
   /// Table Mapping (CDS alias → DB column)
@@ -106,6 +130,11 @@ define behavior for ZSO_R_REQ_H alias SalesOrderRequest
     Status          = STATUS;
     Approver        = APPROVER;
     RejectionReason = REJECTION_REASON;
+    ApprovalDueDate = APPROVAL_DUE_DATE;
+    SlaStatus       = SLA_STATUS;
+    EscalationLevel = ESCALATION_LEVEL;
+    EscalatedTo     = ESCALATED_TO;
+    EscalatedAt     = ESCALATED_AT;
     CreatedBy       = CREATED_BY;
     CreatedAt       = CREATED_AT;
     ChangedBy       = CHANGED_BY;
@@ -140,5 +169,35 @@ define behavior for ZSO_R_REQ_I alias SalesOrderItem
     UnitPrice = UNIT_PRICE;
     NetAmount = NET_AMOUNT;
     Currency  = CURRENCY;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CHILD: Sales Order Approval History (Audit Trail)
+///////////////////////////////////////////////////////////////////////////////
+define behavior for ZSO_R_REQ_HIST alias SalesOrderHistory
+  persistent table ZSO_APPR_HIST
+  draft table     ZSO_DAPPR_HIST
+  lock dependent   by _Header
+  authorization dependent by _Header
+{
+  field ( readonly ) HistoryId, RequestId, StepNo, Action, Actor, ActorRole,
+                      ActionTimestamp, CommentText, PreviousStatus, NewStatus, WorkflowTaskId;
+
+  association _Header;
+
+  mapping for ZSO_APPR_HIST corresponding
+  {
+    HistoryId       = HISTORY_ID;
+    RequestId       = REQUEST_ID;
+    StepNo          = STEP_NO;
+    Action          = ACTION;
+    Actor           = ACTOR;
+    ActorRole       = ACTOR_ROLE;
+    ActionTimestamp = ACTION_TIMESTAMP;
+    CommentText     = COMMENT_TEXT;
+    PreviousStatus  = PREVIOUS_STATUS;
+    NewStatus       = NEW_STATUS;
+    WorkflowTaskId  = WORKFLOW_TASK_ID;
   }
 }

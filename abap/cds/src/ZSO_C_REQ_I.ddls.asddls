@@ -23,6 +23,13 @@ define view entity ZSO_C_REQ_I
       ///
       /// Business Fields
       ///
+      @Consumption.valueHelpDefinition: [{
+        entity: { name: 'ZSO_VH_MATERIAL', element: 'MaterialId' },
+        additionalBinding: [
+          { localElement: 'Material', element: 'MaterialId', usage: #RESULT },
+          { localElement: 'Unit',     element: 'BaseUnit',   usage: #RESULT }
+        ]
+      }]
       @UI.lineItem:       [{ position: 30, label: 'Material' }]
       @UI.identification: [{ position: 30, label: 'Material' }]
       Material,

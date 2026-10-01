@@ -1,0 +1,19 @@
+///////////////////////////////////////////////////////////////////////////////
+// DCL Access Control: ZSO_I_APPR_RULE (Approval Rules Configuration)
+//
+// Only administrators with authorization activity 03 (Display) or 02 (Change)
+// on authorization object ZSO_APPROVAL may view or maintain routing rules.
+// Requesters and basic Approvers are strictly prohibited.
+///////////////////////////////////////////////////////////////////////////////
+
+@MappingRole: true
+define role ZSO_I_APPR_RULE_ADMIN {
+
+  grant select on ZSO_I_APPR_RULE
+    where
+      ( ) = aspect pfcg_auth(
+        ZSO_APPROVAL,
+        ACTVT = '03'
+      );
+
+}

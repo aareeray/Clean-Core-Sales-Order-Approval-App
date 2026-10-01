@@ -1,0 +1,64 @@
+@EndUserText.label: 'Sales Order Approval Routing Rules'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #C
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_APPR_RULE {
+
+  @AbapCatalog.foreignKey.screenCheck: false
+  key mandt         : mandt not null;
+
+  @EndUserText.label: 'Rule ID'
+  key rule_id       : abap.char(10) not null;
+
+  @EndUserText.label: 'Sequence / Approval Level'
+  approval_level    : abap.numc(2) not null;
+
+  @EndUserText.label: 'Minimum Amount'
+  @Semantics.amount.currencyCode: 'currency'
+  min_amount        : abap.curr(15,2);
+
+  @EndUserText.label: 'Maximum Amount'
+  @Semantics.amount.currencyCode: 'currency'
+  max_amount        : abap.curr(15,2);
+
+  @EndUserText.label: 'Currency'
+  @Semantics.currencyCode: true
+  currency          : abap.cuky;
+
+  @EndUserText.label: 'Approver Role'
+  approver_role     : abap.char(20);
+
+  @EndUserText.label: 'Default Approver User'
+  approver_user     : abap.char(12);
+
+  @EndUserText.label: 'SLA Duration (Hours)'
+  sla_hours         : abap.int4;
+
+  @EndUserText.label: 'Active Indicator'
+  is_active         : abap_boolean;
+
+  @EndUserText.label: 'Valid From Date'
+  valid_from        : abap.dats;
+
+  @EndUserText.label: 'Valid To Date'
+  valid_to          : abap.dats;
+
+  @EndUserText.label: 'Created By'
+  @Semantics.user.createdBy: true
+  created_by        : syuname;
+
+  @EndUserText.label: 'Created At'
+  @Semantics.systemDateTime.createdAt: true
+  created_at        : utclong;
+
+  @EndUserText.label: 'Changed By'
+  @Semantics.user.lastChangedBy: true
+  changed_by        : syuname;
+
+  @EndUserText.label: 'Changed At'
+  @Semantics.systemDateTime.lastChangedAt: true
+  changed_at        : utclong;
+
+}
