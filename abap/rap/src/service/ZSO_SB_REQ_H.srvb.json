@@ -1,0 +1,44 @@
+{
+  "_comment": "Service Binding reference spec — use to fill the ADT New Service Binding wizard",
+  "_note": "Service Bindings cannot be created as text files. Follow the ADT wizard steps in ADT_CREATION_GUIDE.md",
+
+  "name":                "ZSO_SB_REQ_H",
+  "description":         "Sales Order Request Service Binding (OData V4 UI)",
+  "package":             "Z_SALES_APPROVAL",
+  "bindingType":         "ODATA V4 - UI",
+  "serviceDefinition":   "ZSO_SD_REQ_H",
+  "version":             "0001",
+
+  "publishedServiceURL": "/sap/opu/odata4/sap/zso_sb_req_h/srvd/sap/zso_sd_req_h/0001/",
+
+  "entitySets": [
+    {
+      "entitySet":   "SalesOrderRequest",
+      "cdsView":     "ZSO_C_REQ_H",
+      "draftEnabled": true,
+      "operations":  ["GET", "POST", "PATCH", "DELETE"],
+      "actions":     ["submit", "approve", "reject", "resubmit"],
+      "draftActions":["Edit", "Activate", "Discard", "Resume", "Prepare"]
+    },
+    {
+      "entitySet":   "SalesOrderItem",
+      "cdsView":     "ZSO_C_REQ_I",
+      "draftEnabled": true,
+      "operations":  ["GET", "PATCH", "DELETE"]
+    },
+    {
+      "entitySet":   "StatusValueHelp",
+      "cdsView":     "ZSO_VH_STATUS",
+      "draftEnabled": false,
+      "operations":  ["GET"]
+    },
+    {
+      "entitySet":   "CustomerValueHelp",
+      "cdsView":     "ZSO_VH_CUSTOMER",
+      "draftEnabled": false,
+      "operations":  ["GET"]
+    }
+  ],
+
+  "fioriPreviewURL": "Use ADT Service Binding editor → Preview button after publishing"
+}

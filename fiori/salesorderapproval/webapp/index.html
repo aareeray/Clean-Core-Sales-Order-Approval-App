@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Sales Order Approval</title>
+
+    <script>
+        window["sap-ushell-config"] = {
+            defaultRenderer: "fiori2",
+            bootstrapPlugins: {
+                "RuntimeAuthoringPlugin": {
+                    component: "sap.ushell.plugins.rta",
+                    config: {
+                        validateAppVersion: false
+                    }
+                }
+            },
+            renderers: {
+                fiori2: {
+                    componentData: {
+                        config: {
+                            enableSearch: false,
+                            rootIntent: "Shell-home"
+                        }
+                    }
+                }
+            },
+            services: {
+                "LaunchPage": {
+                    "adapter": {
+                        "config": {
+                            "groups": [
+                                {
+                                    "id": "default.group",
+                                    "title": "Sales Apps",
+                                    "isPreset": true,
+                                    "isVisible": true,
+                                    "isGroupLocked": false,
+                                    "tiles": [
+                                        {
+                                            "id": "salesorderapproval",
+                                            "tileType": "sap.ushell.ui.tile.StaticTile",
+                                            "properties": {
+                                                "title": "Sales Order Approval",
+                                                "subtitle": "Manage Requests",
+                                                "icon": "sap-icon://sales-order",
+                                                "targetURL": "#SalesOrderApproval-display"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "NavTargetResolution": {
+                    "config": {
+                        "runStandaloneAppFolderWhitelist": {
+                            "*": true
+                        },
+                        "allowTestUrlComponentConfig": true,
+                        "enableClientSideTargetResolution": true
+                    }
+                },
+                "SupportedNavigationIntents": {}
+            },
+            applications: {
+                "SalesOrderApproval-display": {
+                    additionalInformation: "SAPUI5.Component=com.company.salesorderapproval",
+                    applicationType:       "URL",
+                    url:                   "../",
+                    description:           "Sales Order Approval"
+                }
+            }
+        };
+    </script>
+
+    <script
+        src="https://ui5.sap.com/test-resources/sap/ushell/bootstrap/sandbox.js"
+        id="sap-ushell-bootstrap"
+    ></script>
+
+    <script
+        src="https://ui5.sap.com/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m, sap.ushell, sap.fe.templates"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="allow"
+        data-sap-ui-preload="async"
+    ></script>
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ushell.Container.createRenderer().placeAt("content");
+        });
+    </script>
+</head>
+<body class="sapUiBody" id="content"></body>
+</html>

@@ -1,0 +1,12 @@
+@EndUserText.label: 'Sales Order Total Amount'
+
+define data_element ZSO_E_TOTAL_AMT
+{
+  type : abap.curr(15,2);
+  @EndUserText: {
+    label:            'Total Amount',
+    quickInfo:        'Total net amount of the Sales Order Request',
+    heading:          'Total Amount',
+    shortDescription: 'Total Amt'
+  }
+}

@@ -1,0 +1,54 @@
+@EndUserText.label: 'Sales Order Request Header'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_REQ_H {
+
+  @AbapCatalog.foreignKey.screenCheck: false
+  key mandt         : mandt not null;
+
+  @EndUserText.label: 'Request ID (UUID)'
+  key request_id    : sysuuid_x16 not null;
+
+  @EndUserText.label: 'Customer ID'
+  customer_id       : abap.char(10);
+
+  @EndUserText.label: 'Request Date'
+  request_date      : abap.dats;
+
+  @EndUserText.label: 'Total Amount'
+  @Semantics.amount.currencyCode: 'currency'
+  total_amount      : abap.curr(15,2);
+
+  @EndUserText.label: 'Currency'
+  @Semantics.currencyCode: true
+  currency          : abap.cuky;
+
+  @EndUserText.label: 'Status'
+  status            : ZSO_E_STATUS;
+
+  @EndUserText.label: 'Approver'
+  approver          : abap.char(12);
+
+  @EndUserText.label: 'Rejection Reason'
+  rejection_reason  : abap.char(255);
+
+  @EndUserText.label: 'Created By'
+  @Semantics.user.createdBy: true
+  created_by        : syuname;
+
+  @EndUserText.label: 'Created At'
+  @Semantics.systemDateTime.createdAt: true
+  created_at        : utclong;
+
+  @EndUserText.label: 'Changed By'
+  @Semantics.user.lastChangedBy: true
+  changed_by        : syuname;
+
+  @EndUserText.label: 'Changed At'
+  @Semantics.systemDateTime.lastChangedAt: true
+  changed_at        : utclong;
+
+}

@@ -1,0 +1,28 @@
+///////////////////////////////////////////////////////////////////////////////
+// DCL Access Control: ZSO_R_REQ_I (Sales Order Request Item)
+//
+// Authorization is INHERITED from the parent ZSO_R_REQ_H via the composition.
+// The @AccessControl.authorizationCheck: #INHERITED annotation on ZSO_R_REQ_I
+// means the header's DCL conditions are automatically propagated to items.
+//
+// This DCL file acts as a structural guard: items are only accessible when
+// they belong to a header that exists (RequestId is not initial).
+//
+// No separate PFCG checks are needed here — the header's checks already
+// enforce role-based and instance-based restrictions.
+//
+// Assignment: Same IAM App as header (ZSO_APPROVAL_IAM)
+///////////////////////////////////////////////////////////////////////////////
+
+@MappingRole: true
+define role ZSO_R_REQ_I {
+
+  grant select on ZSO_R_REQ_I
+    where
+      ///
+      /// Structural guard: only items belonging to an existing header
+      /// are visible. This condition is always true for valid items
+      /// and prevents orphaned item access.
+      ///
+      _Header.RequestId is not initial;
+}

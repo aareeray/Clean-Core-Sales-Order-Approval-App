@@ -1,0 +1,203 @@
+{
+  "_metadata": {
+    "schemaVersion": "1.0",
+    "exportedAt": "2026-10-01",
+    "note": "Import this spec into SAP Build Process Automation via the Process editor. Recreate each step manually using the visual designer — SBPA does not support direct JSON import as of 2024, but this spec maps 1:1 to the visual UI."
+  },
+
+  "process": {
+    "name":        "Sales Order Approval Process",
+    "id":          "com.company.zso.approvalprocess",
+    "version":     "1.0.0",
+    "description": "Multi-level approval workflow for Sales Order Requests. Triggered when a request is submitted via the RAP action 'submit'. Routes to Manager (<10,000) or Director (>=10,000) based on total amount.",
+
+    "trigger": {
+      "type":        "API",
+      "description": "Called from ABAP save_modified method via HTTP POST to the SBPA trigger REST API",
+      "endpoint":    "POST /workflow/rest/v1/workflow-instances",
+      "authentication": "OAuth2 (BTP XSUAA)",
+      "inputContext": {
+        "requestId":      { "type": "string",  "description": "UUID of the Sales Order Request (from ZSO_REQ_H.REQUEST_ID)" },
+        "customerId":     { "type": "string",  "description": "Customer ID" },
+        "requestDate":    { "type": "string",  "description": "Request date (YYYY-MM-DD)" },
+        "totalAmount":    { "type": "number",  "description": "Total amount (numeric, e.g. 12500.00)" },
+        "currency":       { "type": "string",  "description": "Currency code (e.g. EUR)" },
+        "requesterEmail": { "type": "string",  "description": "Email of the requester (sy-uname mapped to user email)" },
+        "requesterName":  { "type": "string",  "description": "Display name of the requester" },
+        "serviceUrl":     { "type": "string",  "description": "Base OData V4 service URL for API callbacks" }
+      }
+    },
+
+    "contextVariables": [
+      { "name": "requestId",        "type": "string"  },
+      { "name": "customerId",       "type": "string"  },
+      { "name": "requestDate",      "type": "string"  },
+      { "name": "totalAmount",      "type": "number"  },
+      { "name": "currency",         "type": "string"  },
+      { "name": "requesterEmail",   "type": "string"  },
+      { "name": "requesterName",    "type": "string"  },
+      { "name": "serviceUrl",       "type": "string"  },
+      { "name": "approverDecision", "type": "string",  "default": "" },
+      { "name": "rejectionReason",  "type": "string",  "default": "" },
+      { "name": "approverEmail",    "type": "string",  "default": "" },
+      { "name": "approverRole",     "type": "string",  "default": "" }
+    ],
+
+    "steps": [
+
+      {
+        "id":          "step_route_by_amount",
+        "name":        "Route by Amount",
+        "type":        "GATEWAY_EXCLUSIVE",
+        "description": "Branches based on TotalAmount threshold",
+        "branches": [
+          {
+            "id":        "branch_manager",
+            "label":     "Manager Approval (< 10,000)",
+            "condition": "${context.totalAmount} < 10000",
+            "next":      "step_manager_task"
+          },
+          {
+            "id":        "branch_director",
+            "label":     "Director Approval (>= 10,000)",
+            "condition": "${context.totalAmount} >= 10000",
+            "next":      "step_director_task"
+          }
+        ]
+      },
+
+      {
+        "id":          "step_manager_task",
+        "name":        "Manager Approval Task",
+        "type":        "USER_TASK",
+        "description": "Approval task routed to users with role APPROVER_MANAGER",
+        "subject":     "Approval Required: Sales Order ${context.requestId} (${context.currency} ${context.totalAmount})",
+        "recipients": {
+          "type":  "ROLE",
+          "value": "APPROVER_MANAGER"
+        },
+        "formId":      "form_approval_decision",
+        "dueDate":     "+3 business days",
+        "priority":    "MEDIUM",
+        "onComplete":  "step_check_decision",
+        "actions": [
+          { "id": "approve", "label": "Approve", "type": "COMPLETE", "decision": "APPROVED" },
+          { "id": "reject",  "label": "Reject",  "type": "COMPLETE", "decision": "REJECTED" }
+        ]
+      },
+
+      {
+        "id":          "step_director_task",
+        "name":        "Director Approval Task",
+        "type":        "USER_TASK",
+        "description": "Approval task routed to users with role APPROVER_DIRECTOR",
+        "subject":     "Director Approval Required: Sales Order ${context.requestId} (${context.currency} ${context.totalAmount})",
+        "recipients": {
+          "type":  "ROLE",
+          "value": "APPROVER_DIRECTOR"
+        },
+        "formId":      "form_approval_decision",
+        "dueDate":     "+2 business days",
+        "priority":    "HIGH",
+        "onComplete":  "step_check_decision",
+        "actions": [
+          { "id": "approve", "label": "Approve", "type": "COMPLETE", "decision": "APPROVED" },
+          { "id": "reject",  "label": "Reject",  "type": "COMPLETE", "decision": "REJECTED" }
+        ]
+      },
+
+      {
+        "id":          "step_check_decision",
+        "name":        "Check Approver Decision",
+        "type":        "GATEWAY_EXCLUSIVE",
+        "branches": [
+          {
+            "id":        "branch_approved",
+            "condition": "${context.approverDecision} == 'APPROVED'",
+            "next":      "step_call_approve_api"
+          },
+          {
+            "id":        "branch_rejected",
+            "condition": "${context.approverDecision} == 'REJECTED'",
+            "next":      "step_call_reject_api"
+          }
+        ]
+      },
+
+      {
+        "id":          "step_call_approve_api",
+        "name":        "Call RAP approve Action",
+        "type":        "SERVICE_TASK",
+        "description": "Calls OData V4 bound action to set status = APPROVED in the ABAP backend",
+        "destination": "ZSO_ABAP_BACKEND",
+        "method":      "POST",
+        "url":         "${context.serviceUrl}SalesOrderRequest(RequestId=${context.requestId},IsActiveEntity=true)/ZSO_SD_REQ_H.approve",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept":       "application/json"
+        },
+        "body":        "{}",
+        "onSuccess":   "step_notify_approved",
+        "onError":     "step_error_handler"
+      },
+
+      {
+        "id":          "step_call_reject_api",
+        "name":        "Call RAP reject Action",
+        "type":        "SERVICE_TASK",
+        "description": "Calls OData V4 bound action to set status = REJECTED with reason",
+        "destination": "ZSO_ABAP_BACKEND",
+        "method":      "POST",
+        "url":         "${context.serviceUrl}SalesOrderRequest(RequestId=${context.requestId},IsActiveEntity=true)/ZSO_SD_REQ_H.reject",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept":       "application/json"
+        },
+        "body": {
+          "RejectionReason": "${context.rejectionReason}"
+        },
+        "onSuccess":   "step_notify_rejected",
+        "onError":     "step_error_handler"
+      },
+
+      {
+        "id":          "step_notify_approved",
+        "name":        "Send Approval Email",
+        "type":        "NOTIFICATION",
+        "notificationType": "EMAIL",
+        "templateId":  "email_template_approved",
+        "recipients": [
+          { "type": "CONTEXT_VARIABLE", "value": "${context.requesterEmail}" }
+        ],
+        "next":        "step_end"
+      },
+
+      {
+        "id":          "step_notify_rejected",
+        "name":        "Send Rejection Email",
+        "type":        "NOTIFICATION",
+        "notificationType": "EMAIL",
+        "templateId":  "email_template_rejected",
+        "recipients": [
+          { "type": "CONTEXT_VARIABLE", "value": "${context.requesterEmail}" }
+        ],
+        "next":        "step_end"
+      },
+
+      {
+        "id":          "step_error_handler",
+        "name":        "API Call Error Handler",
+        "type":        "SCRIPT_TASK",
+        "description": "Logs the error. In production: send alert email to admin and terminate gracefully.",
+        "script":      "console.error('SBPA workflow API call failed for requestId:', context.requestId);",
+        "next":        "step_end"
+      },
+
+      {
+        "id":   "step_end",
+        "name": "End",
+        "type": "END_EVENT"
+      }
+    ]
+  }
+}

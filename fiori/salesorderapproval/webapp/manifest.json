@@ -1,0 +1,201 @@
+{
+  "_version": "1.59.0",
+
+  "sap.app": {
+    "id": "com.company.salesorderapproval",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.11.4",
+      "toolsId": "sap-fiori:lrop"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata4/sap/zso_sb_req_h/srvd/sap/zso_sd_req_h/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "sap-icon://sales-order",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet":  true,
+      "phone":   true
+    },
+    "fullWidth": false
+  },
+
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+
+  "sap.ui5": {
+    "flexEnabled": true,
+    "minUI5Version": "1.84.0",
+
+    "dependencies": {
+      "minUI5Version": "1.84.0",
+      "libs": {
+        "sap.m":              { "lazy": false },
+        "sap.ui.core":        { "lazy": false },
+        "sap.ushell":         { "lazy": false },
+        "sap.fe.templates":   { "lazy": false },
+        "sap.fe.core":        { "lazy": false }
+      }
+    },
+
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.company.salesorderapproval.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+
+    "routing": {
+      "config": {
+        "routerClass": "sap.fe.core.AppComponent",
+        "viewType":    "XML",
+        "controlId":   "app",
+        "controlAggregation": "pages"
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name":    "SalesOrderRequestList",
+          "target":  "SalesOrderRequestList"
+        },
+        {
+          "pattern": "SalesOrderRequest({key}):?query:",
+          "name":    "SalesOrderRequestObjectPage",
+          "target":  "SalesOrderRequestObjectPage"
+        },
+        {
+          "pattern": "SalesOrderRequest({headerKey})/SalesOrderItem({key}):?query:",
+          "name":    "SalesOrderItemObjectPage",
+          "target":  "SalesOrderItemObjectPage"
+        }
+      ],
+      "targets": {
+
+        "SalesOrderRequestList": {
+          "type": "Component",
+          "id":   "SalesOrderRequestList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "SalesOrderRequest",
+              "contextPath": "/SalesOrderRequest",
+              "initialLoad": "Enabled",
+              "variantManagement": "Page",
+              "navigation": {
+                "SalesOrderRequest": {
+                  "detail": {
+                    "route": "SalesOrderRequestObjectPage"
+                  }
+                }
+              },
+              "filterSettings": {
+                "dateSettings": {
+                  "useDateRange": true
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type":            "ResponsiveTable",
+                    "selectionMode":   "Multi",
+                    "enableExport":    true,
+                    "enableFullScreen": true
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "SalesOrderRequestObjectPage": {
+          "type": "Component",
+          "id":   "SalesOrderRequestObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "entitySet":             "SalesOrderRequest",
+              "contextPath":           "/SalesOrderRequest",
+              "editableHeaderContent": false,
+              "showAnchorBar":         true,
+              "navigation": {
+                "SalesOrderItem": {
+                  "detail": {
+                    "route": "SalesOrderItemObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "_Items/@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type":          "GridTable",
+                    "enableExport":  true
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "SalesOrderItemObjectPage": {
+          "type": "Component",
+          "id":   "SalesOrderItemObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "entitySet":   "SalesOrderRequest",
+              "contextPath": "/SalesOrderRequest/SalesOrderItem",
+              "editableHeaderContent": false
+            }
+          }
+        }
+
+      }
+    },
+
+    "contentDensities": {
+      "compact":    true,
+      "cozy":       true
+    }
+  }
+}

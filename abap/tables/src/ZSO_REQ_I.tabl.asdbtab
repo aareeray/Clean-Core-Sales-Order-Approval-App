@@ -1,0 +1,41 @@
+@EndUserText.label: 'Sales Order Request Item'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_REQ_I {
+
+  @AbapCatalog.foreignKey.screenCheck: false
+  key mandt         : mandt not null;
+
+  @EndUserText.label: 'Request ID (UUID)'
+  key request_id    : sysuuid_x16 not null;
+
+  @EndUserText.label: 'Item Number'
+  key item_no       : abap.numc(6) not null;
+
+  @EndUserText.label: 'Material'
+  material          : abap.char(40);
+
+  @EndUserText.label: 'Quantity'
+  @Semantics.quantity.unitOfMeasure: 'unit'
+  quantity          : abap.quan(13,3);
+
+  @EndUserText.label: 'Unit of Measure'
+  @Semantics.unitOfMeasure: true
+  unit              : abap.unit(3);
+
+  @EndUserText.label: 'Unit Price'
+  @Semantics.amount.currencyCode: 'currency'
+  unit_price        : abap.curr(15,2);
+
+  @EndUserText.label: 'Net Amount'
+  @Semantics.amount.currencyCode: 'currency'
+  net_amount        : abap.curr(15,2);
+
+  @EndUserText.label: 'Currency'
+  @Semantics.currencyCode: true
+  currency          : abap.cuky;
+
+}

@@ -1,0 +1,116 @@
+{
+  "_metadata": {
+    "formId":    "form_approval_decision",
+    "formName":  "Sales Order Approval Decision Form",
+    "version":   "1.0",
+    "note":      "Recreate this form in SBPA Form editor. Each section below = a form section in the visual designer."
+  },
+
+  "form": {
+    "id":    "form_approval_decision",
+    "title": "Sales Order Approval Decision",
+    "layout": "VERTICAL",
+
+    "sections": [
+
+      {
+        "id":    "section_request_info",
+        "title": "Request Information",
+        "type":  "READ_ONLY",
+        "fields": [
+          {
+            "id":          "field_requestId",
+            "label":       "Request ID",
+            "type":        "TEXT",
+            "readonly":    true,
+            "binding":     "${context.requestId}"
+          },
+          {
+            "id":          "field_customerId",
+            "label":       "Customer",
+            "type":        "TEXT",
+            "readonly":    true,
+            "binding":     "${context.customerId}"
+          },
+          {
+            "id":          "field_requestDate",
+            "label":       "Request Date",
+            "type":        "DATE",
+            "readonly":    true,
+            "binding":     "${context.requestDate}"
+          },
+          {
+            "id":          "field_totalAmount",
+            "label":       "Total Amount",
+            "type":        "TEXT",
+            "readonly":    true,
+            "binding":     "${context.totalAmount} ${context.currency}",
+            "displayHint": "e.g. 12,500.00 EUR"
+          },
+          {
+            "id":          "field_requesterName",
+            "label":       "Requested By",
+            "type":        "TEXT",
+            "readonly":    true,
+            "binding":     "${context.requesterName}"
+          }
+        ]
+      },
+
+      {
+        "id":    "section_decision",
+        "title": "Your Decision",
+        "type":  "INPUT",
+        "fields": [
+          {
+            "id":          "field_rejectionReason",
+            "label":       "Rejection Reason",
+            "type":        "TEXTAREA",
+            "readonly":    false,
+            "required":    false,
+            "placeholder": "Required when rejecting — explain why this request cannot be approved.",
+            "maxLength":   255,
+            "rows":        4,
+            "binding":     "${context.rejectionReason}",
+            "visibleWhen": "always",
+            "note":        "Leave blank if approving. This field becomes mandatory when 'Reject' is clicked (enforced by SBPA action validation)."
+          }
+        ]
+      }
+
+    ],
+
+    "actions": [
+      {
+        "id":           "action_approve",
+        "label":        "Approve",
+        "type":         "COMPLETE",
+        "style":        "EMPHASIZED",
+        "icon":         "sap-icon://accept",
+        "confirmation": "Are you sure you want to approve this Sales Order Request?",
+        "setsContext": {
+          "approverDecision": "APPROVED"
+        },
+        "validation": []
+      },
+      {
+        "id":           "action_reject",
+        "label":        "Reject",
+        "type":         "COMPLETE",
+        "style":        "NEGATIVE",
+        "icon":         "sap-icon://decline",
+        "confirmation": "Are you sure you want to reject this request?",
+        "setsContext": {
+          "approverDecision": "REJECTED"
+        },
+        "validation": [
+          {
+            "field":   "field_rejectionReason",
+            "rule":    "NOT_EMPTY",
+            "message": "Rejection Reason is required when rejecting a request."
+          }
+        ]
+      }
+    ]
+  }
+}

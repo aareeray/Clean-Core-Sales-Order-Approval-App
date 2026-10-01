@@ -1,0 +1,144 @@
+managed implementation in class ZSO_BP_REQ_H unique;
+strict ( 2 );
+with draft;
+
+///////////////////////////////////////////////////////////////////////////////
+// ROOT: Sales Order Request Header
+///////////////////////////////////////////////////////////////////////////////
+define behavior for ZSO_R_REQ_H alias SalesOrderRequest
+  persistent table ZSO_REQ_H
+  draft table     ZSO_DREQ_H
+  etag master     ChangedAt
+  lock master     total etag ChangedAt
+  authorization master ( instance )
+  with additional save
+{
+  ///
+  /// Standard CRUD Operations
+  ///
+  create;
+  update;
+  delete;
+
+  ///
+  /// Draft Lifecycle Actions
+  ///
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare
+  {
+    validation validateCustomer;
+    validation validateAmount;
+    validation validateRejectionReason;
+  }
+
+  ///
+  /// Custom Business Actions
+  /// (features : instance) = enable/disable per instance via get_instance_features
+  ///
+  action ( features : instance ) submit
+    result [1] $self;
+
+  action ( features : instance ) approve
+    result [1] $self;
+
+  action ( features : instance ) reject
+    parameter ZSO_P_REJECT
+    result    [1] $self;
+
+  action ( features : instance ) resubmit
+    result [1] $self;
+
+  ///
+  /// Validations — triggered on save sequence
+  ///
+  validation validateCustomer
+    on save { create; update; }
+
+  validation validateAmount
+    on save { create; update; }
+
+  validation validateRejectionReason
+    on save { field RejectionReason; }
+
+  ///
+  /// Determinations — triggered on data modification
+  ///
+  determination setInitialStatus
+    on modify { create; }
+
+  determination calculateTotalAmount
+    on modify { field NetAmount; }
+
+  determination setChangedAt
+    on modify { create; update; }
+
+  ///
+  /// Field-Level Controls
+  ///
+  field ( readonly )  RequestId,
+                      CreatedBy,
+                      CreatedAt,
+                      ChangedBy,
+                      ChangedAt,
+                      Status;
+
+  field ( mandatory ) CustomerId,
+                      RequestDate;
+
+  ///
+  /// Associations
+  ///
+  association _Items { create; with draft; }
+
+  ///
+  /// Table Mapping (CDS alias → DB column)
+  ///
+  mapping for ZSO_REQ_H corresponding
+  {
+    RequestId       = REQUEST_ID;
+    CustomerId      = CUSTOMER_ID;
+    RequestDate     = REQUEST_DATE;
+    TotalAmount     = TOTAL_AMOUNT;
+    Currency        = CURRENCY;
+    Status          = STATUS;
+    Approver        = APPROVER;
+    RejectionReason = REJECTION_REASON;
+    CreatedBy       = CREATED_BY;
+    CreatedAt       = CREATED_AT;
+    ChangedBy       = CHANGED_BY;
+    ChangedAt       = CHANGED_AT;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CHILD: Sales Order Request Item
+///////////////////////////////////////////////////////////////////////////////
+define behavior for ZSO_R_REQ_I alias SalesOrderItem
+  persistent table ZSO_REQ_I
+  draft table     ZSO_DREQ_I
+  lock dependent   by _Header
+  authorization dependent by _Header
+{
+  update;
+  delete;
+
+  field ( readonly )  RequestId, ItemNo;
+  field ( mandatory ) Material, Quantity, Unit, UnitPrice;
+
+  association _Header;
+
+  mapping for ZSO_REQ_I corresponding
+  {
+    RequestId = REQUEST_ID;
+    ItemNo    = ITEM_NO;
+    Material  = MATERIAL;
+    Quantity  = QUANTITY;
+    Unit      = UNIT;
+    UnitPrice = UNIT_PRICE;
+    NetAmount = NET_AMOUNT;
+    Currency  = CURRENCY;
+  }
+}

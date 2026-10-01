@@ -1,0 +1,34 @@
+@EndUserText.label: 'Draft Table for ZSO_REQ_H'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_DREQ_H {
+
+  key mandt              : mandt not null;
+  key request_id         : sysuuid_x16 not null;
+
+  -- RAP Draft Administration Fields (mandatory)
+  "%admin"               : include sych_bdl_draft_admin_inc;
+
+  -- Business data (mirror of ZSO_REQ_H minus MANDT/key)
+  customer_id            : abap.char(10);
+  request_date           : abap.dats;
+  @Semantics.amount.currencyCode: 'currency'
+  total_amount           : abap.curr(15,2);
+  @Semantics.currencyCode: true
+  currency               : abap.cuky;
+  status                 : ZSO_E_STATUS;
+  approver               : abap.char(12);
+  rejection_reason       : abap.char(255);
+  @Semantics.user.createdBy: true
+  created_by             : syuname;
+  @Semantics.systemDateTime.createdAt: true
+  created_at             : utclong;
+  @Semantics.user.lastChangedBy: true
+  changed_by             : syuname;
+  @Semantics.systemDateTime.lastChangedAt: true
+  changed_at             : utclong;
+
+}

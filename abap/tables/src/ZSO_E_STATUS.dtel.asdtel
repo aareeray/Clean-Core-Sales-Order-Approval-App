@@ -1,0 +1,13 @@
+@EndUserText.label: 'Sales Order Request Status'
+@AbapCatalog.domainName: 'ZSO_D_STATUS'
+
+define data_element ZSO_E_STATUS
+{
+  type : ZSO_D_STATUS;
+  @EndUserText: {
+    label:            'Status',
+    quickInfo:        'Processing status of the Sales Order Request',
+    heading:          'Status',
+    shortDescription: 'Status'
+  }
+}

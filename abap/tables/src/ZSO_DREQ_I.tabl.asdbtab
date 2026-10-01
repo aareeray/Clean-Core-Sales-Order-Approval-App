@@ -1,0 +1,29 @@
+@EndUserText.label: 'Draft Table for ZSO_REQ_I'
+@AbapCatalog.enhancement.category: #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory: #TRANSPARENT
+@AbapCatalog.deliveryClass: #A
+@AbapCatalog.dataMaintenance: #RESTRICTED
+
+define table ZSO_DREQ_I {
+
+  key mandt              : mandt not null;
+  key request_id         : sysuuid_x16 not null;
+  key item_no            : abap.numc(6) not null;
+
+  -- RAP Draft Administration Fields (mandatory)
+  "%admin"               : include sych_bdl_draft_admin_inc;
+
+  -- Business data (mirror of ZSO_REQ_I minus keys)
+  material               : abap.char(40);
+  @Semantics.quantity.unitOfMeasure: 'unit'
+  quantity               : abap.quan(13,3);
+  @Semantics.unitOfMeasure: true
+  unit                   : abap.unit(3);
+  @Semantics.amount.currencyCode: 'currency'
+  unit_price             : abap.curr(15,2);
+  @Semantics.amount.currencyCode: 'currency'
+  net_amount             : abap.curr(15,2);
+  @Semantics.currencyCode: true
+  currency               : abap.cuky;
+
+}

@@ -1,0 +1,91 @@
+///////////////////////////////////////////////////////////////////////////////
+// DCL Access Control: ZSO_R_REQ_H (Sales Order Request Header)
+//
+// Three roles are defined:
+//
+//   ZSO_R_REQ_H_REQUESTER — Requesters see only their own requests
+//                            (instance restriction: CreatedBy = $user)
+//
+//   ZSO_R_REQ_H_APPROVER  — Approvers see only requests assigned to them
+//                            (instance restriction: Approver = $user)
+//
+//   ZSO_R_REQ_H_ADMIN     — Admins see all requests, no instance restriction
+//
+// All roles use pfcg_auth on ZSO_APPROVAL authorization object.
+// The ACTVT = '03' (Display) condition is the minimum for read access.
+// Write operations are controlled by the BDEF get_instance_authorizations.
+//
+// Assignment: Business Roles map to these DCL roles via IAM App ZSO_APPROVAL_IAM
+///////////////////////////////////////////////////////////////////////////////
+
+
+///
+/// Role 1: REQUESTER — Can only see requests they created
+///
+@MappingRole: true
+define role ZSO_R_REQ_H_REQUESTER {
+
+  grant select on ZSO_R_REQ_H
+    where
+      ///
+      /// Instance restriction: only own requests visible
+      ///
+      CreatedBy = $user
+
+      ///
+      /// PFCG authorization check: user must have display activity
+      /// on ZSO_APPROVAL for the request's Status and CustomerId
+      ///
+      and ( Status, CustomerId ) = aspect pfcg_auth(
+            ZSO_APPROVAL,
+            STATUS,
+            CUSTOMER_ID,
+            ACTVT = '03'
+      );
+}
+
+
+///
+/// Role 2: APPROVER — Can only see requests assigned to them
+///
+@MappingRole: true
+define role ZSO_R_REQ_H_APPROVER {
+
+  grant select on ZSO_R_REQ_H
+    where
+      ///
+      /// Instance restriction: only assigned requests visible
+      ///
+      Approver = $user
+
+      ///
+      /// PFCG authorization check: approver display rights
+      ///
+      and ( Status, CustomerId ) = aspect pfcg_auth(
+            ZSO_APPROVAL,
+            STATUS,
+            CUSTOMER_ID,
+            ACTVT = '03'
+      );
+}
+
+
+///
+/// Role 3: ADMIN — No instance restriction; full visibility
+///
+@MappingRole: true
+define role ZSO_R_REQ_H_ADMIN {
+
+  grant select on ZSO_R_REQ_H
+    where
+      ///
+      /// No instance restriction — Admin sees all requests
+      /// Only PFCG authorization check for Status and CustomerId
+      ///
+      ( Status, CustomerId ) = aspect pfcg_auth(
+            ZSO_APPROVAL,
+            STATUS,
+            CUSTOMER_ID,
+            ACTVT = '03'
+      );
+}

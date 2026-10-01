@@ -1,0 +1,13 @@
+@EndUserText.label: 'Sales Order Request ID (UUID)'
+@AbapCatalog.domainName: ''
+
+define data_element ZSO_E_REQUEST_ID
+{
+  type : abap.raw(16);
+  @EndUserText: {
+    label:              'Request ID',
+    quickInfo:          'Unique identifier for Sales Order Request (UUID)',
+    heading:            'Request ID',
+    shortDescription:   'Req. ID'
+  }
+}

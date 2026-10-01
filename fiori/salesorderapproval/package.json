@@ -1,0 +1,26 @@
+{
+  "name": "salesorderapproval",
+  "version": "1.0.0",
+  "description": "SAP Fiori Elements: Sales Order Approval App",
+  "private": true,
+  "keywords": [
+    "ui5",
+    "openui5",
+    "sapui5"
+  ],
+  "main": "n/a",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start":  "fiori run --open 'test/flpSandbox.html'",
+    "build":  "ui5 build --config ui5.yaml --clean-dest",
+    "deploy": "fiori add deploy-config && npm run build && fiori deploy",
+    "lint":   "eslint webapp"
+  },
+  "devDependencies": {
+    "@sap/ux-ui5-tooling":            "latest",
+    "@ui5/cli":                        "^3.0.0",
+    "@sap/generator-fiori":            "latest",
+    "eslint":                          "^8.0.0",
+    "@sap/eslint-plugin-ui5-jsdocs":  "latest"
+  }
+}

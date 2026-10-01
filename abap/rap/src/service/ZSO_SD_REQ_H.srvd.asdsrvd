@@ -1,0 +1,33 @@
+@EndUserText.label: 'Sales Order Request Service Definition'
+
+///
+/// Service Definition: ZSO_SD_REQ_H
+///
+/// Exposes the CDS projection views for the Sales Order Approval app.
+/// Actions (submit, approve, reject, resubmit) defined in the BDEF are
+/// automatically included — they do not need to be listed here explicitly.
+///
+/// Entity set names used in OData URL:
+///   /SalesOrderRequest      → ZSO_C_REQ_H
+///   /SalesOrderRequest(key)/_Items  → ZSO_C_REQ_I  (via navigation)
+///
+define service ZSO_SD_REQ_H
+{
+  ///
+  /// Root entity — the primary entity set
+  ///
+  expose ZSO_C_REQ_H as SalesOrderRequest;
+
+  ///
+  /// Child entity — accessible via navigation from SalesOrderRequest
+  /// and also directly as /SalesOrderItem
+  ///
+  expose ZSO_C_REQ_I as SalesOrderItem;
+
+  ///
+  /// Value help entities — must be exposed so Fiori Elements can
+  /// resolve @Consumption.valueHelpDefinition references at runtime
+  ///
+  expose ZSO_VH_STATUS   as StatusValueHelp;
+  expose ZSO_VH_CUSTOMER as CustomerValueHelp;
+}
